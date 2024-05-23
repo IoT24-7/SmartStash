@@ -37,6 +37,7 @@
 	"dependencies": {
 		"@auth/firebase-adapter": "^2.1.0",
 		"@auth/sveltekit": "^1.1.0",
+		"@fontsource-variable/manrope": "^5.0.20",
 		"bits-ui": "^0.21.9",
 		"clsx": "^2.1.1",
 		"dotenv": "^16.4.5",

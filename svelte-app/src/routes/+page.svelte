@@ -4,20 +4,20 @@
 	import { page } from '$app/stores';
 </script>
 
-<main class="flex w-full h-screen justify-center flex-col items-center">
-	<div class="flex w-full max-w-sm flex-col items-center mb-16">
+<main class="mt-40 flex w-full flex-col items-center justify-start">
+	<div class=" flex w-full max-w-sm flex-col items-center">
 		<h1
-			class="hidden text-center text-3xl font-bold leading-tight tracking-tighter md:block md:text-6xl lg:leading-[1.1] py-4"
+			class="py-4 text-center text-5xl font-extrabold leading-tight tracking-tighter md:text-7xl lg:leading-[1.1]"
 		>
-			SmartStash
+			Smart<span class="text-primary">Stash</span>
 		</h1>
 		{#if $page.data.session?.user}
-			<Button variant="outline" href="/dashboard" class="my-2">Go to Dashboard</Button>
+			<Button href="/dashboard" class="my-2">Go to Dashboard</Button>
 			<SignOut>
-				<Button slot="submitButton" class="buttonPrimary">Sign out</Button>
+				<Button slot="submitButton" variant="outline">Sign out</Button>
 			</SignOut>
 		{:else}
-			<p class="py-2">Sign in to continue</p>
+			<p class="py-2 text-muted-foreground">Sign in to continue</p>
 			<SignIn
 				options={{
 					redirectTo: $page.data.redirectTo
