@@ -1,22 +1,18 @@
-<script>
+<script lang="ts">
 	// @ts-nocheck
 
 	import '@fontsource-variable/manrope';
 	import '../app.css';
 	import { page } from '$app/stores';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { Button } from '$lib/components/ui/button';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Home from 'lucide-svelte/icons/home';
-	import LineChart from 'lucide-svelte/icons/line-chart';
 	import Bell from 'lucide-svelte/icons/bell';
-	import Package2 from 'lucide-svelte/icons/package-2';
 	import PanelLeft from 'lucide-svelte/icons/panel-left';
 	import Settings from 'lucide-svelte/icons/settings';
 	import ShoppingCart from 'lucide-svelte/icons/shopping-cart';
-	import UsersRound from 'lucide-svelte/icons/users-round';
 	import { SignOut } from '@auth/sveltekit/components';
 </script>
 
