@@ -1,38 +1,43 @@
-# create-svelte
+# SmartStash
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This guide will walk you through setting up and running the SmartStash web application on your local machine using SvelteKit.
 
-## Creating a project
+## Prerequisites
 
-If you're seeing this, you've probably already done this step. Congrats!
+Before you begin, ensure you have the following installed:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Node.js (LTS version recommended)
+- npm (comes with Node.js)
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## Setup
 
-## Developing
+1. **Clone the Repository**
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+   First, clone the SmartStash repository to your local machine:
 
-```bash
-npm run dev
+   ```bash
+   git clone https://github.com/IoT24-7/SmartStash.git
+   ```
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+2. **Install Dependencies**
 
-## Building
+   Navigate to the project directory and install the required dependencies:
 
-To create a production version of your app:
+   ```bash
+   cd SmartStash/svelte-app
+   npm install
+   ```
 
-```bash
-npm run build
-```
+3. **Environment Variables**
 
-You can preview the production build with `npm run preview`.
+   You will receive the `.env` and the `service-account.json` file via messenger. Place this file in the root directory of the project.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+4. **Start the Development Server**
+
+   To start the development server, run:
+
+   ```bash
+   npm run dev --open
+   ```
+
+   Your application will now be available at `http://localhost:5173`.
