@@ -17,8 +17,8 @@
 </script>
 
 {#if $page.data.session?.user && $page.route.id !== '/'}
-	<div class="bg-muted/40 flex min-h-screen w-full flex-col sm:flex-row">
-		<aside class="bg-background fixed inset-y-0 left-0 z-10 hidden w-56 flex-col border-r sm:flex">
+	<div class="flex min-h-screen w-full flex-col bg-muted/40 sm:flex-row">
+		<aside class="fixed inset-y-0 left-0 z-10 hidden w-56 flex-col border-r bg-background sm:flex">
 			<nav class="flex flex-col items-start gap-2 px-2 sm:py-5">
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger asChild let:builder>
@@ -47,7 +47,7 @@
 							><p>Welcome, {$page.data.session?.user?.name}!</p></DropdownMenu.Label
 						>
 						<DropdownMenu.Separator />
-						<a href="/settings">
+						<a href="/app/settings">
 							<DropdownMenu.Item class="cursor-pointer">Settings</DropdownMenu.Item></a
 						>
 						<DropdownMenu.Separator />
@@ -59,37 +59,37 @@
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 				<div
-					class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-						'/dashboard'
+					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+						'/app/dashboard'
 					)
-						? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 						: ''}"
 				>
-					<a href="/dashboard" class="flex items-center gap-4 px-4">
+					<a href="/app/dashboard" class="flex items-center gap-4 px-4">
 						<Home class="h-5 w-5" />
 						<p class="text-lg font-medium">Dashboard</p>
 					</a>
 				</div>
 				<div
-					class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-						'/shopping-list'
+					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+						'/app/shopping-list'
 					)
-						? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 						: ''}"
 				>
-					<a href="/shopping-list" class="flex items-center gap-4 px-4">
+					<a href="/app/shopping-list" class="flex items-center gap-4 px-4">
 						<ShoppingCart class="h-5 w-5" />
 						<p class="text-lg font-medium">Shopping List</p>
 					</a>
 				</div>
 				<div
-					class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-						'/notifications'
+					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+						'/app/notifications'
 					)
-						? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 						: ''}"
 				>
-					<a href="/notifications" class="flex items-center gap-4 px-4">
+					<a href="/app/notifications" class="flex items-center gap-4 px-4">
 						<Bell class="h-5 w-5" />
 						<p class="text-lg font-medium">Notifications</p>
 					</a>
@@ -97,13 +97,13 @@
 			</nav>
 			<nav class="mt-auto flex flex-col items-start gap-4 px-2 sm:py-5">
 				<div
-					class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-						'/settings'
+					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+						'/app/settings'
 					)
-						? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 						: ''}"
 				>
-					<a href="/settings" class="flex items-center gap-4 px-4">
+					<a href="/app/settings" class="flex items-center gap-4 px-4">
 						<Settings class="h-5 w-5" />
 						<p class="text-lg font-medium">Settings</p>
 					</a>
@@ -112,7 +112,7 @@
 		</aside>
 		<div class="flex w-full flex-col sm:gap-4 sm:py-14 sm:pl-56">
 			<header
-				class="bg-background sticky top-0 z-30 mb-2 flex h-14 items-center gap-4 border-b px-4 sm:hidden"
+				class="sticky top-0 z-30 mb-2 flex h-14 items-center gap-4 border-b bg-background px-4 sm:hidden"
 			>
 				<Sheet.Root>
 					<Sheet.Trigger asChild let:builder>
@@ -162,49 +162,49 @@
 								</DropdownMenu.Content>
 							</DropdownMenu.Root>
 							<div
-								class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-									'/dashboard'
+								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+									'/app/dashboard'
 								)
-									? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 									: ''}"
 							>
-								<a href="/dashboard" class="flex items-center gap-4 px-4">
+								<a href="/app/dashboard" class="flex items-center gap-4 px-4">
 									<Home class="h-5 w-5" />
 									<p class="text-lg font-medium">Dashboard</p>
 								</a>
 							</div>
 							<div
-								class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-									'/shopping-list'
+								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+									'/app/shopping-list'
 								)
-									? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 									: ''}"
 							>
-								<a href="/shopping-list" class="flex items-center gap-4 px-4">
+								<a href="/app/shopping-list" class="flex items-center gap-4 px-4">
 									<ShoppingCart class="h-5 w-5" />
 									<p class="text-lg font-medium">Shopping List</p>
 								</a>
 							</div>
 							<div
-								class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-									'/notifications'
+								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+									'/app/notifications'
 								)
-									? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 									: ''}"
 							>
-								<a href="/notifications" class="flex items-center gap-4 px-4">
+								<a href="/app/notifications" class="flex items-center gap-4 px-4">
 									<Bell class="h-5 w-5" />
 									<p class="text-lg font-medium">Notifications</p>
 								</a>
 							</div>
 							<div
-								class="text-muted-foreground hover:text-foreground hover:bg-accent colors flex w-full justify-start rounded-lg py-2 transition-colors {$page.route.id?.startsWith(
-									'/settings'
+								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+									'/app/settings'
 								)
-									? 'text-primary hover:text-primary bg-primary/30 hover:bg-primary/30'
+									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
 									: ''}"
 							>
-								<a href="/settings" class="flex items-center gap-4 px-4">
+								<a href="/app/settings" class="flex items-center gap-4 px-4">
 									<Settings class="h-5 w-5" />
 									<p class="text-lg font-medium">Settings</p>
 								</a>
