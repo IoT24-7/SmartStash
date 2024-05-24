@@ -12,7 +12,7 @@
 			Smart<span class="text-primary">Stash</span>
 		</h1>
 		{#if $page.data.session?.user}
-			<Button href="/dashboard" class="my-2">Go to Dashboard</Button>
+			<Button href="/app/dashboard" class="my-2">Go to Dashboard</Button>
 			<SignOut>
 				<Button slot="submitButton" variant="outline">Sign out</Button>
 			</SignOut>
@@ -22,7 +22,7 @@
 				options={{
 					redirectTo: $page.data.redirectTo
 						? `/${decodeURIComponent($page.data.redirectTo).slice(1)}`
-						: `/dashboard`
+						: `/app/dashboard`
 				}}
 			>
 				<Button slot="submitButton">Sign in</Button>
