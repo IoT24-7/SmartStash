@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, onSnapshot } from 'firebase/firestore';
+	import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
 
-	let userID;
+	let userID: string | undefined = '';
 	$: userID = $page.data.session?.user?.id;
 
 	// dummy data
@@ -66,6 +67,20 @@
 			}
 		);
 	};
+	// Function to delete a notification
+	const deleteNotification = async (notifId: string) => {
+		if (userID) {
+			try {
+				const notifDoc = doc(db, 'users', userID, 'notifications', notifId);
+				await deleteDoc(notifDoc);
+				// console.log(`Notification with ID ${notifId} deleted successfully.`);
+			} catch (error) {
+				console.error('Error deleting notification:', error);
+			}
+		} else {
+			console.warn('User ID is not defined');
+		}
+	};
 
 	// Initialize userID and set up listener once
 	$: {
@@ -85,11 +100,16 @@
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
 				{#each notifications.reverse() as notification (notification.id)}
-					<li class="rounded-2xl bg-white p-3 shadow-md">
-						<form>
+					<li class="flex flex-row justify-between rounded-2xl bg-white p-3 shadow-md">
+						<div class="flex-grow">
 							<p class="text-1xl font-extrabold tracking-tight">{notification.foodItem}</p>
 							<p class="notifs__content">Your {notification.foodItem} is running low.</p>
-						</form>
+							<p class="text-xs text-gray-500">2 hours ago</p>
+						</div>
+						<button
+							class="self-start rounded px-2 py-1 text-base font-bold text-gray-400 hover:text-blue-700"
+							on:click={() => deleteNotification(notification.id)}>Remove</button
+						>
 					</li>
 				{/each}
 			{:else}
