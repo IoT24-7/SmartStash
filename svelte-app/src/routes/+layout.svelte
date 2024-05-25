@@ -18,8 +18,27 @@
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { resetMode, setMode } from 'mode-watcher';
+	const appName = 'SmartStash';
+	let title = appName;
+	$: {
+		if ($page.url.pathname.startsWith('/app')) {
+			let pathParts = $page.url.pathname.split('/');
+			let appIndex = pathParts.indexOf('app');
+			title = pathParts[appIndex + 1];
+			if (title === 'shopping-list') {
+				title = 'Shopping List';
+			} else {
+				title = title.charAt(0).toUpperCase() + title.slice(1);
+			}
+		} else {
+			title = 'SmartStash';
+		}
+	}
 </script>
 
+<svelte:head>
+	<title>{title}</title>
+</svelte:head>
 <ModeWatcher />
 {#if $page.data.session?.user && $page.route.id !== '/'}
 	<div class="flex min-h-screen w-full flex-col bg-muted/40">
