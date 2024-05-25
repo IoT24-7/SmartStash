@@ -4,6 +4,7 @@
 	import { db } from '$lib/firebase';
 	import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
+	import { Trash } from 'lucide-svelte/icons';
 
 	let userID: string | undefined = '';
 	$: userID = $page.data.session?.user?.id;
@@ -116,18 +117,26 @@
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
 				{#each notifications as notification (notification.id)}
-					<li class="flex flex-row justify-between rounded-2xl bg-white p-3 shadow-md">
+					<li
+						class="flex flex-row justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md items-center mb-2"
+					>
 						<div class="flex-grow">
-							<p class="text-1xl font-extrabold tracking-tight">{notification.foodItem}</p>
-							<p class="notifs__content">Your {notification.foodItem} is running low.</p>
-							<p class="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
+							<p class="text-xl font-bold tracking-tight">{notification.foodItem}</p>
+							<p class="leading-7">You're running low on {notification.foodItem}.</p>
+							<p class="text-xs text-muted-foreground">{formatTimestamp(notification.timestamp)}</p>
 						</div>
-						<button
-							class="self-start rounded px-2 py-1 text-base font-bold text-gray-400 hover:text-blue-700"
-							on:click={() => deleteNotification(notification.id)}>Remove</button
+						<Button
+							variant="ghost"
+							size="icon"
+							class="group"
+							on:click={() => deleteNotification(notification.id)}
 						>
+							<Trash class="h-5 w-5 text-gray-500 group-hover:text-red-500" />
+						</Button>
 					</li>
 				{/each}
+			{:else if notifications.length === 0}
+				<p>Nice work! You're all caught up.</p>
 			{:else}
 				<p class="text-muted-foreground">Loading...</p>
 			{/if}
