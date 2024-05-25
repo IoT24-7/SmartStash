@@ -115,7 +115,7 @@
 		<ul class="flex flex-col gap-2">
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
-				{#each notifications.reverse() as notification (notification.id)}
+				{#each notifications as notification (notification.id)}
 					<li class="flex flex-row justify-between rounded-2xl bg-white p-3 shadow-md">
 						<div class="flex-grow">
 							<p class="text-1xl font-extrabold tracking-tight">{notification.foodItem}</p>
