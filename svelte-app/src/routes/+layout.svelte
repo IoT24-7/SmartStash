@@ -25,14 +25,10 @@
 	<div class="flex min-h-screen w-full flex-col bg-muted/40">
 		<aside class="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
 			<nav class="flex flex-col items-start gap-2 px-2 sm:py-5">
-				<div class="mb-2 flex flex-row items-center justify-between w-full">
+				<div class="mb-2 flex w-full flex-row items-center justify-between">
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger asChild let:builder>
-							<Button
-								variant="ghost"
-								class="h-auto items-start justify-start"
-								builders={[builder]}
-							>
+							<Button variant="ghost" class="h-auto items-start justify-start" builders={[builder]}>
 								<div class="flex flex-row items-center gap-2">
 									<Avatar.Root class="h-8 w-8">
 										<Avatar.Image src={$page.data.session.user.image} />
@@ -83,56 +79,64 @@
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 				</div>
-				<div
-					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-						'/app/dashboard'
-					)
-						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-						: ''}"
-				>
-					<a href="/app/dashboard" class="flex items-center gap-4 px-4">
-						<Home class="h-5 w-5" />
-						<p class="text-lg font-medium">Dashboard</p>
-					</a>
-				</div>
-				<div
-					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-						'/app/shopping-list'
-					)
-						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-						: ''}"
-				>
-					<a href="/app/shopping-list" class="flex items-center gap-4 px-4">
-						<ShoppingCart class="h-5 w-5" />
-						<p class="text-lg font-medium">Shopping List</p>
-					</a>
-				</div>
-				<div
-					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-						'/app/notifications'
-					)
-						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-						: ''}"
-				>
-					<a href="/app/notifications" class="flex items-center gap-4 px-4">
-						<Bell class="h-5 w-5" />
-						<p class="text-lg font-medium">Notifications</p>
-					</a>
-				</div>
+				<a href="/app/dashboard" class="w-full">
+					<div
+						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+							'/app/dashboard'
+						)
+							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							: ''}"
+					>
+						<div class="flex items-center gap-4 px-4">
+							<Home class="h-5 w-5" />
+							<p class="text-lg font-medium">Dashboard</p>
+						</div>
+					</div>
+				</a>
+				<a href="/app/shopping-list" class="w-full">
+					<div
+						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+							'/app/shopping-list'
+						)
+							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							: ''}"
+					>
+						<div href="/app/shopping-list" class="flex items-center gap-4 px-4">
+							<ShoppingCart class="h-5 w-5" />
+							<p class="text-lg font-medium">Shopping List</p>
+						</div>
+					</div>
+				</a>
+				<a href="/app/notifications" class="w-full">
+					<div
+						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+							'/app/notifications'
+						)
+							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							: ''}"
+					>
+						<div class="flex items-center gap-4 px-4">
+							<Bell class="h-5 w-5" />
+							<p class="text-lg font-medium">Notifications</p>
+						</div>
+					</div>
+				</a>
 			</nav>
 			<nav class="mt-auto flex flex-col items-start gap-4 px-2 sm:py-5">
-				<div
-					class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-						'/app/settings'
-					)
-						? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-						: ''}"
-				>
-					<a href="/app/settings" class="flex items-center gap-4 px-4">
-						<Settings class="h-5 w-5" />
-						<p class="text-lg font-medium">Settings</p>
-					</a>
-				</div>
+				<a href="/app/settings" class="w-full">
+					<div
+						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+							'/app/settings'
+						)
+							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							: ''}"
+					>
+						<div class="flex items-center gap-4 px-4">
+							<Settings class="h-5 w-5" />
+							<p class="text-lg font-medium">Settings</p>
+						</div>
+					</div>
+				</a>
 			</nav>
 		</aside>
 		<div class="flex flex-col sm:gap-4 sm:py-14 sm:pl-64">
@@ -186,54 +190,62 @@
 									</DropdownMenu.Item>
 								</DropdownMenu.Content>
 							</DropdownMenu.Root>
-							<div
-								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-									'/app/dashboard'
-								)
-									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-									: ''}"
-							>
-								<a href="/app/dashboard" class="flex items-center gap-4 px-4">
-									<Home class="h-5 w-5" />
-									<p class="text-lg font-medium">Dashboard</p>
-								</a>
-							</div>
-							<div
-								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-									'/app/shopping-list'
-								)
-									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-									: ''}"
-							>
-								<a href="/app/shopping-list" class="flex items-center gap-4 px-4">
-									<ShoppingCart class="h-5 w-5" />
-									<p class="text-lg font-medium">Shopping List</p>
-								</a>
-							</div>
-							<div
-								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-									'/app/notifications'
-								)
-									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-									: ''}"
-							>
-								<a href="/app/notifications" class="flex items-center gap-4 px-4">
-									<Bell class="h-5 w-5" />
-									<p class="text-lg font-medium">Notifications</p>
-								</a>
-							</div>
-							<div
-								class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
-									'/app/settings'
-								)
-									? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
-									: ''}"
-							>
-								<a href="/app/settings" class="flex items-center gap-4 px-4">
-									<Settings class="h-5 w-5" />
-									<p class="text-lg font-medium">Settings</p>
-								</a>
-							</div>
+							<a href="/app/dashboard" class="w-full">
+								<div
+									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+										'/app/dashboard'
+									)
+										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										: ''}"
+								>
+									<div class="flex items-center gap-4 px-4">
+										<Home class="h-5 w-5" />
+										<p class="text-lg font-medium">Dashboard</p>
+									</div>
+								</div>
+							</a>
+							<a href="/app/shopping-list" class="w-full">
+								<div
+									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+										'/app/shopping-list'
+									)
+										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										: ''}"
+								>
+									<div class="flex items-center gap-4 px-4">
+										<ShoppingCart class="h-5 w-5" />
+										<p class="text-lg font-medium">Shopping List</p>
+									</div>
+								</div>
+							</a>
+							<a href="/app/notifications" class="w-full">
+								<div
+									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+										'/app/notifications'
+									)
+										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										: ''}"
+								>
+									<div class="flex items-center gap-4 px-4">
+										<Bell class="h-5 w-5" />
+										<p class="text-lg font-medium">Notifications</p>
+									</div>
+								</div>
+							</a>
+							<a href="/app/settings" class="w-full">
+								<div
+									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
+										'/app/settings'
+									)
+										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										: ''}"
+								>
+									<div class="flex items-center gap-4 px-4">
+										<Settings class="h-5 w-5" />
+										<p class="text-lg font-medium">Settings</p>
+									</div>
+								</div>
+							</a>
 						</nav>
 					</Sheet.Content>
 				</Sheet.Root>
