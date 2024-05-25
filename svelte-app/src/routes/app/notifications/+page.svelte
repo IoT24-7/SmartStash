@@ -56,7 +56,7 @@
 						id: doc.id,
 						userID: data.userID,
 						foodItem: data.foodItem,
-						timestamp: data.timestamp
+						timestamp: data.timestamp.toMillis ? data.timestamp.toMillis() : data.timestamp // convert to milliseconds
 					} as Notifs;
 				});
 				notifications = [...fetchedNotifications];
@@ -82,6 +82,22 @@
 		}
 	};
 
+	const formatTimestamp = (timestamp: Date) => {
+		const date = new Date(timestamp);
+		const now = new Date();
+		const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // difference in seconds
+
+		if (diff < 60) {
+			return `${diff} seconds ago`;
+		} else if (diff < 3600) {
+			return `${Math.floor(diff / 60)} minutes ago`;
+		} else if (diff < 86400) {
+			return `${Math.floor(diff / 3600)} hours ago`;
+		} else {
+			return `${Math.floor(diff / 86400)} days ago`;
+		}
+	};
+
 	// Initialize userID and set up listener once
 	$: {
 		userID = $page.data.session?.user?.id;
@@ -104,7 +120,7 @@
 						<div class="flex-grow">
 							<p class="text-1xl font-extrabold tracking-tight">{notification.foodItem}</p>
 							<p class="notifs__content">Your {notification.foodItem} is running low.</p>
-							<p class="text-xs text-gray-500">2 hours ago</p>
+							<p class="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
 						</div>
 						<button
 							class="self-start rounded px-2 py-1 text-base font-bold text-gray-400 hover:text-blue-700"
