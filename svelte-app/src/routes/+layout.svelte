@@ -34,12 +34,16 @@
 			title = 'SmartStash';
 		}
 	}
+	const themeColors = {
+		dark: '#020817',
+		light: '#ffffff'
+	};
 </script>
 
 <svelte:head>
 	<title>{title}</title>
 </svelte:head>
-<ModeWatcher />
+<ModeWatcher {themeColors} defaultMode="system" />
 {#if $page.data.session?.user && $page.route.id !== '/'}
 	<div class="flex min-h-screen w-full flex-col bg-muted/40">
 		<aside class="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
