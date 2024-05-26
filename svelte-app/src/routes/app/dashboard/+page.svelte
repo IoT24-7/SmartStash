@@ -14,7 +14,7 @@
 	const isDesktop = mediaQuery('(min-width: 768px)');
 </script>
 
-<div class="relative flex min-h-screen w-full flex-col">
+<div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 text-3xl font-extrabold tracking-tight">Dashboard</h2>
 		<p>Welcome, {$page.data.session?.user?.name}!</p>
@@ -26,7 +26,7 @@
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
-					<div class = "fixed bottom-3 right-3">
+					<div class = "fixed bottom-5 right-5">
 						<Button builders={[builder]}>Add Ingredient</Button>
 					</div>
 				</Dialog.Trigger>
@@ -48,7 +48,7 @@
 		{:else}
 			<Drawer.Root bind:open>
 				<Drawer.Trigger asChild let:builder>
-					<div class = "fixed bottom-3 right-3">
+					<div class = "fixed bottom-5 right-5">
 						<Button builders={[builder]}>Add Ingredient</Button>
 					</div>
 				</Drawer.Trigger>
