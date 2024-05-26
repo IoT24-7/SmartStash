@@ -23,6 +23,14 @@
 			<Button slot="submitButton">Sign out</Button>
 		</SignOut>
 
+		<!-- for cards -->
+		<li class="flex flex-row justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md items-center mb-2">
+			<div class="flex-grow">
+				<p class="text-xl font-bold tracking-tight">{"Cereal"}</p>
+				<p class="text-xs text-muted-foreground">{"500 grams"}</p>
+			</div>
+		</li>
+
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>

@@ -5,6 +5,7 @@
 	import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
 	import { Trash } from 'lucide-svelte/icons';
+	import NoWorkResult from 'postcss/lib/no-work-result';
 
 	let userID: string | undefined = '';
 	$: userID = $page.data.session?.user?.id;
@@ -44,7 +45,12 @@
 	// check app.d.ts file for notif type
 	// notifications is an array of notifs
 
-	let notifications: Notifs[] = [];
+	let notifications: Notifs[] = [{
+		id: '1',
+		userID: '2',
+		foodItem: 'test',
+		timestamp: new Date("2024-01-01")
+	 	}];
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
