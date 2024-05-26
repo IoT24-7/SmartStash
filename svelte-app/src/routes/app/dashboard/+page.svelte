@@ -14,14 +14,6 @@
 	const isDesktop = mediaQuery('(min-width: 768px)');
 </script>
 
-<style>
-	.button-bottomright {
-   		position: fixed;
-    	bottom: 25px;
-    	right: 25px;
-	}
-</style>
-
 <div class="relative flex min-h-screen w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 text-3xl font-extrabold tracking-tight">Dashboard</h2>
@@ -34,7 +26,7 @@
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
-					<div class = "button-bottomright">
+					<div class = "fixed bottom-3 right-3">
 						<Button builders={[builder]}>Add Ingredient</Button>
 					</div>
 				</Dialog.Trigger>
@@ -56,7 +48,7 @@
 		{:else}
 			<Drawer.Root bind:open>
 				<Drawer.Trigger asChild let:builder>
-					<div class = "button-bottomright">
+					<div class = "fixed bottom-3 right-3">
 						<Button builders={[builder]}>Add Ingredient</Button>
 					</div>
 				</Drawer.Trigger>
