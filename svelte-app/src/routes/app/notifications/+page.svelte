@@ -119,7 +119,9 @@
 		const now = new Date();
 		const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // difference in seconds
 
-		if (diff < 60) {
+		if (diff < 2) {
+			return 'Just now';
+		} else if (diff < 60) {
 			return `${diff} seconds ago`;
 		} else if (diff < 3600) {
 			return `${Math.floor(diff / 60)} minutes ago`;
@@ -148,7 +150,7 @@
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
 
-				{#each notifications as notification (notification.timestamp)}
+				{#each notifications.sort((a, b) => b.timestamp - a.timestamp) as notification (notification.timestamp)}
 					<li
 						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
 					>
