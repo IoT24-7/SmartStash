@@ -71,7 +71,7 @@
 						timestamp: data.timestamp // convert to milliseconds
 					} as Notifs;
 				});
-				notifications = [...fetchedNotifications];
+				notifications = [...fetchedNotifications].sort((a, b) => b.timestamp - a.timestamp);
 				console.log(notifications);
 			},
 			(error) => {
