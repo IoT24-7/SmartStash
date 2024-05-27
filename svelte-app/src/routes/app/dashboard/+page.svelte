@@ -12,6 +12,18 @@
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 768px)');
+
+	import Plus from "svelte-radix/Plus.svelte";
+
+	// for cards:
+	import Pencil2 from "svelte-radix/Pencil2.svelte";
+	import Trash from "svelte-radix/Trash.svelte";
+	let cards = [
+		{ name: 'Cereal', weight: '200 g'},
+		{ name: 'Rice', weight: '800 g'},
+		{ name: 'Sugar', weight: '10 g'},
+		{ name: 'Nuts', weight: '150 g'}
+	]
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -24,18 +36,79 @@
 		</SignOut>
 
 		<!-- for cards -->
-		<li class="flex flex-row justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md items-center mb-2">
-			<div class="flex-grow">
-				<p class="text-xl font-bold tracking-tight">{"Cereal"}</p>
-				<p class="text-xs text-muted-foreground">{"500 grams"}</p>
-			</div>
-		</li>
+		<div class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
+			{#each cards as { name, weight }}
+			<li class="flex flex-row justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md items-center mb-2">
+				<div>
+					<span class = "text-xl relative font-bold tracking-tight">
+						{ name }
+					</span>
+					<br>
+					<span class = "text-xs relative bottom-2 text-muted-foreground">
+						{ weight }
+					</span>
+				</div>
+				<div>
+					<Dialog.Root> <!-- edit ingredient -->
+						<Dialog.Trigger>
+							<Button variant="ghost" size="icon">
+								<Pencil2 class="h-4 w-4" />
+							</Button>
+						</Dialog.Trigger>
+						<Dialog.Content class="sm:max-w-[425px]">
+							<Dialog.Header>
+							  <Dialog.Title>Edit Ingredient</Dialog.Title>
+							  <Dialog.Description>
+								Change the details of your ingredient here. Click save when you're done.
+							  </Dialog.Description>
+							</Dialog.Header>
+							<div class="grid gap-4 py-4">
+							  <div class="grid grid-cols-4 items-center gap-4">
+								<Label for="name" class="text-right">Ingredient Name</Label>
+								<Input id="name" value= {name} class="col-span-3" />
+							  </div>
+							</div>
+							<Dialog.Footer>
+							  <Button type="submit">Save</Button>
+							</Dialog.Footer>
+						  </Dialog.Content>
+					</Dialog.Root>
 
+					<Dialog.Root> <!-- delete ingredient -->
+						<Dialog.Trigger>
+							<Button variant="ghost" size="icon">
+								<Trash class="h-4 w-4" />
+							</Button>
+						</Dialog.Trigger>
+						<Dialog.Content class="sm:max-w-[425px]">
+							<Dialog.Header>
+							  <Dialog.Title>Are you sure you want to delete this ingredient?</Dialog.Title>
+							  <Dialog.Description>
+								Clicking delete removes all information of the ingredient and cannot be undone.
+							  </Dialog.Description>
+							</Dialog.Header>
+							<Dialog.Footer>
+							  <Button variant="outline">No</Button>
+							  <Button variant="destructive">Yes</Button>
+							</Dialog.Footer>
+						</Dialog.Content>
+					</Dialog.Root>
+				</div>
+			</li>
+			{/each}
+		</div>
+
+
+
+		<!-- for add ingredient -->
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
-					<div class = "fixed bottom-5 right-5">
-						<Button builders={[builder]}>Add Ingredient</Button>
+					<div class = "fixed bottom-7 right-7">
+						<Button builders={[builder]} class="h-14 px-12">
+							<Plus class="mr-2 h-5 w-5" />
+							<span class="font-bold text-lg">Add</span>
+						</Button>
 					</div>
 				</Dialog.Trigger>
 				<Dialog.Content class="sm:max-w-[425px]">
@@ -56,8 +129,11 @@
 		{:else}
 			<Drawer.Root bind:open>
 				<Drawer.Trigger asChild let:builder>
-					<div class = "fixed bottom-5 right-5">
-						<Button builders={[builder]}>Add Ingredient</Button>
+					<div class = "fixed bottom-7 right-7">
+						<Button builders={[builder]} class="h-14 px-12">
+							<Plus class="mr-2 h-5 w-5" />
+							<span class="font-bold text-lg">Add</span>
+						</Button>
 					</div>
 				</Drawer.Trigger>
 				<Drawer.Content>
