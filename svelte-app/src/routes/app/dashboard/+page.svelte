@@ -18,6 +18,7 @@
 	// for cards:
 	import Pencil2 from "svelte-radix/Pencil2.svelte";
 	import Trash from "svelte-radix/Trash.svelte";
+	// dummy data, TODO: IMPLEMENT THIS IN BACKEND
 	let cards = [
 		{ name: 'Cereal', weight: '200 g'},
 		{ name: 'Rice', weight: '800 g'},
@@ -73,7 +74,6 @@
 							</Dialog.Footer>
 						  </Dialog.Content>
 					</Dialog.Root>
-
 					<Dialog.Root> <!-- delete ingredient -->
 						<Dialog.Trigger>
 							<Button variant="ghost" size="icon">

@@ -45,12 +45,8 @@
 	// check app.d.ts file for notif type
 	// notifications is an array of notifs
 
-	let notifications: Notifs[] = [{
-		id: '1',
-		userID: '2',
-		foodItem: 'test',
-		timestamp: new Date("2024-01-01")
-	 	}];
+	let notifications: Notifs[] = [
+	 	];
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
