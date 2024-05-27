@@ -43,7 +43,7 @@
 <svelte:head>
 	<title>{title}</title>
 </svelte:head>
-<ModeWatcher {themeColors} defaultMode="system" />
+<ModeWatcher {themeColors} />
 {#if $page.data.session?.user && $page.route.id !== '/'}
 	<div class="flex min-h-screen w-full flex-col bg-muted/40">
 		<aside class="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
@@ -175,44 +175,46 @@
 					</Sheet.Trigger>
 					<Sheet.Content side="left" class="max-w-64">
 						<nav class="grid gap-6 text-lg font-medium">
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger asChild let:builder>
-									<Button
-										variant="ghost"
-										class="h-auto w-full items-start justify-start"
-										builders={[builder]}
-									>
-										<div class="flex flex-row items-center gap-2">
-											<Avatar.Root class="h-8 w-8">
-												<Avatar.Image src={$page.data.session.user.image} />
-												<Avatar.Fallback
-													>{$page.data.session?.user?.name[0]}{$page.data.session?.user?.name
-														.split(' ')
-														.pop()?.[0]}</Avatar.Fallback
-												>
-											</Avatar.Root>
-											<p class="text-lg font-bold tracking-tight">
-												{$page.data.session?.user?.name.split(' ')[0]}
-											</p>
-										</div>
-									</Button>
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="start" class="w-52">
-									<DropdownMenu.Label
-										><p>Welcome, {$page.data.session?.user?.name}!</p></DropdownMenu.Label
-									>
-									<DropdownMenu.Separator />
-									<a href="/app/settings">
-										<DropdownMenu.Item class="cursor-pointer">Settings</DropdownMenu.Item></a
-									>
-									<DropdownMenu.Separator />
-									<DropdownMenu.Item>
-										<SignOut options={{ redirectTo: '/' }}>
-											<div slot="submitButton" class="flex w-56 items-start">Sign out</div>
-										</SignOut>
-									</DropdownMenu.Item>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
+							<div class="flex w-full flex-row items-center justify-between">
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger asChild let:builder>
+										<Button
+											variant="ghost"
+											class="h-auto items-start justify-start"
+											builders={[builder]}
+										>
+											<div class="flex flex-row items-center gap-2">
+												<Avatar.Root class="h-8 w-8">
+													<Avatar.Image src={$page.data.session.user.image} />
+													<Avatar.Fallback
+														>{$page.data.session?.user?.name[0]}{$page.data.session?.user?.name
+															.split(' ')
+															.pop()?.[0]}</Avatar.Fallback
+													>
+												</Avatar.Root>
+												<p class="text-lg font-bold tracking-tight">
+													{$page.data.session?.user?.name.split(' ')[0]}
+												</p>
+											</div>
+										</Button>
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content align="start" class="w-52">
+										<DropdownMenu.Label
+											><p>Welcome, {$page.data.session?.user?.name}!</p></DropdownMenu.Label
+										>
+										<DropdownMenu.Separator />
+										<a href="/app/settings">
+											<DropdownMenu.Item class="cursor-pointer">Settings</DropdownMenu.Item></a
+										>
+										<DropdownMenu.Separator />
+										<DropdownMenu.Item>
+											<SignOut options={{ redirectTo: '/' }}>
+												<div slot="submitButton" class="flex w-56 items-start">Sign out</div>
+											</SignOut>
+										</DropdownMenu.Item>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+							</div>
 							<a href="/app/dashboard" class="w-full">
 								<div
 									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(

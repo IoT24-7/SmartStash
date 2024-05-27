@@ -4,8 +4,7 @@
 	import { db } from '$lib/firebase';
 	import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
-	import { Trash } from 'lucide-svelte/icons';
-	import NoWorkResult from 'postcss/lib/no-work-result';
+	import { Trash2 } from 'lucide-svelte';
 
 	let userID: string | undefined = '';
 	$: userID = $page.data.session?.user?.id;
@@ -45,8 +44,7 @@
 	// check app.d.ts file for notif type
 	// notifications is an array of notifs
 
-	let notifications: Notifs[] = [
-	 	];
+	let notifications: Notifs[] = [];
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
@@ -112,15 +110,15 @@
 	}
 </script>
 
-<div class="relative flex min-h-screen w-full flex-col">
+<div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
-		<h2 class="scroll-m-20 text-3xl font-extrabold tracking-tight">Notifications</h2>
+		<h2 class="scroll-m-20 sm:mt-3 py-4 text-3xl font-extrabold tracking-tight">Notifications</h2>
 		<ul class="flex flex-col gap-2">
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
 				{#each notifications as notification (notification.id)}
 					<li
-						class="flex flex-row justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md items-center mb-2"
+						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
 					>
 						<div class="flex-grow">
 							<p class="text-xl font-bold tracking-tight">{notification.foodItem}</p>
@@ -133,7 +131,7 @@
 							class="group"
 							on:click={() => deleteNotification(notification.id)}
 						>
-							<Trash class="h-5 w-5 text-gray-500 group-hover:text-red-500" />
+							<Trash2 class="h-5 w-5 text-gray-500 group-hover:text-red-500" />
 						</Button>
 					</li>
 				{/each}
