@@ -33,9 +33,9 @@
 							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
 							<p class="sm:text-md text-muted-foreground text-sm">{container.currentWeight} g</p>
 						</div>
-						<div class="relative flex flex-col sm:flex-row">
-							<Dialog.Root>
-								<!-- edit ingredient -->
+						<!-- buttons -->
+						<!-- <div class="relative flex flex-col sm:flex-row">
+							<Dialog.Root> 
 								<Dialog.Trigger>
 									<Button variant="ghost" size="icon">
 										<SquarePen class="h-5 w-5" />
@@ -59,8 +59,7 @@
 									</Dialog.Footer>
 								</Dialog.Content>
 							</Dialog.Root>
-							<Dialog.Root>
-								<!-- delete ingredient -->
+							<Dialog.Root> 					
 								<Dialog.Trigger>
 									<Button variant="ghost" size="icon">
 										<Trash2 class="h-5 w-5" />
@@ -80,7 +79,7 @@
 									</Dialog.Footer>
 								</Dialog.Content>
 							</Dialog.Root>
-						</div>
+						</div> -->
 					</li>
 				</a>
 			{/each}
