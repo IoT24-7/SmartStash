@@ -5,7 +5,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.ts';
 	import { ArrowLeft } from 'lucide-svelte';
-	import { EllipsisVertical } from 'lucide-svelte';
 	import { Wifi } from 'lucide-svelte';
 	import { WifiOff } from 'lucide-svelte';
 	import { SquarePen } from 'lucide-svelte';

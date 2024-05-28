@@ -132,6 +132,7 @@
 							on:click={() => deleteNotification(notification.id)}
 						>
 							<Trash2 class="h-5 w-5 text-gray-500 group-hover:text-red-500" />
+							<span class="sr-only">Delete</span>
 						</Button>
 					</li>
 				{/each}
