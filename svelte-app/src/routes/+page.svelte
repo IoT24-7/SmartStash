@@ -27,6 +27,7 @@
 			>
 				<Button slot="submitButton">Sign in</Button>
 			</SignIn>
+			<Button href="/about" class="my-2">About</Button>
 		{/if}
 	</div>
 </main>
