@@ -10,6 +10,14 @@
 	let userID = $page.data.session?.user?.id;
 	let notifications: Notifs[] = [];
 
+	const generateUniqueID = () => {
+		return Math.random().toString(36).substr(2, 9);
+	};
+
+	const generateTimestamp = () => {
+		return new Date().getTime();
+	};
+
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
 		onSnapshot(
