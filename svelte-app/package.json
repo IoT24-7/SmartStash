@@ -46,6 +46,7 @@
 		"dotenv": "^16.4.5",
 		"firebase": "^10.12.1",
 		"firebase-admin": "^11.11.1",
+		"firebase-functions": "^5.0.1",
 		"lucide-svelte": "^0.379.0",
 		"mode-watcher": "^0.3.0",
 		"radix-svelte": "^0.9.0",
