@@ -7,54 +7,7 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 
-	let userID: string | undefined = '';
-	$: userID = $page.data.session?.user?.id;
-
-	// dummy data
-	// const notifications = [
-	// 	// id = notification id for creation and deletion
-	// 	// userID
-	// 	// foodItem
-	// 	// TODO: Implement notification in backend
-
-	// 	{
-	// 		id: 1,
-	// 		userID: 1,
-	// 		foodItem: 'Rice'
-	// 	},
-
-	// 	{
-	// 		id: 2,
-	// 		userID: 1,
-	// 		foodItem: 'Cereal'
-	// 	},
-
-	// 	{
-	// 		id: 3,
-	// 		userID: 1,
-	// 		foodItem: 'Garlic'
-	// 	},
-
-	// 	{
-	// 		id: 4,
-	// 		userID: 1,
-	// 		foodItem: 'Onion'
-	// 	}
-	// ];
-
-	// check app.d.ts file for notif type
-	// notifications is an array of notifs
-
-	const generateUniqueID = (): string => {
-		return Math.random().toString(36);
-	};
-
-	const generateTimestamp = (): number => {
-		return new Date().getTime();
-	};
-
-	let sampleNotif: Notifs;
-
+	let userID = $page.data.session?.user?.id;
 	let notifications: Notifs[] = [];
 
 	const setupNotificationListener = (uid: string) => {
@@ -133,13 +86,8 @@
 	};
 
 	// Initialize userID and set up listener once
-	$: {
-		userID = $page.data.session?.user?.id;
-		if (userID) {
-			setupNotificationListener(userID);
-		} else {
-			console.warn('User ID is not defined');
-		}
+	if (userID) {
+		setupNotificationListener(userID);
 	}
 </script>
 
@@ -166,6 +114,7 @@
 							on:click={() => deleteNotification(notification.id)}
 						>
 							<Trash2 class="h-5 w-5 text-gray-500 group-hover:text-red-500" />
+							<span class="sr-only">Delete</span>
 						</Button>
 					</li>
 				{/each}

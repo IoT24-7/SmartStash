@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { db } from '$lib/firebase';
+	import { collection, onSnapshot } from 'firebase/firestore';
+	import type { Containers } from '../../../app';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
@@ -7,19 +10,37 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Plus } from 'lucide-svelte';
-	import { SquarePen } from 'lucide-svelte';
-	import { Trash2 } from 'lucide-svelte';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 
-	// dummy data, TODO: IMPLEMENT THIS IN BACKEND
-	let cards = [
-		{ name: 'Cereal', weight: '200' },
-		{ name: 'Rice', weight: '800' },
-		{ name: 'Sugar', weight: '10' },
-		{ name: 'Nuts', weight: '150' }
-	];
+	let containers: Containers[] = [];
+	const setupContainersListener = () => {
+		const containersCollection = collection(db, 'containers');
+		onSnapshot(
+			containersCollection,
+			(snapshot) => {
+				const fetchedContainers: Containers[] = snapshot.docs.map((doc) => {
+					const data = doc.data();
+					return {
+						id: doc.id,
+						currentWeight: data.currentWeight,
+						foodName: data.foodName,
+						status: data.status,
+						threshold: data.threshold,
+						userId: data.userId
+					} as Containers;
+				});
+				containers = [...fetchedContainers];
+				console.log(containers);
+			},
+			(error) => {
+				console.error('Error fetching containers:', error);
+			}
+		);
+	};
+
+	setupContainersListener();
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -28,72 +49,26 @@
 		<p>Welcome, {$page.data.session?.user?.name}!</p>
 		<p class="mb-3">Your ID is {$page.data.session?.user?.id}.</p>
 
-		<!-- for cards -->
-		<div class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
-			{#each cards as { name, weight }}
-				<li
-					class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
-				>
-					<div>
-						<p class="text-lg font-bold tracking-tight sm:text-xl">{name}</p>
-						<p class="sm:text-md text-sm text-muted-foreground">{weight} g</p>
-					</div>
-					<div class="relative flex flex-col sm:flex-row">
-						<Dialog.Root>
-							<!-- edit ingredient -->
-							<Dialog.Trigger>
-								<Button variant="ghost" size="icon">
-									<SquarePen class="h-5 w-5" />
-								</Button>
-							</Dialog.Trigger>
-							<Dialog.Content class="max-w-xs rounded-lg sm:max-w-[425px]">
-								<Dialog.Header>
-									<Dialog.Title>Edit Ingredient</Dialog.Title>
-									<Dialog.Description>
-										Change the details of your ingredient here. Click save when you're done.
-									</Dialog.Description>
-								</Dialog.Header>
-								<div class="grid gap-4 py-4">
-									<div class="flex items-center gap-4">
-										<Label for="name" class="flex-shrink-0 text-right">Ingredient Name</Label>
-										<Input id="name" value={name} class="flex-grow" />
-									</div>
-								</div>
-								<Dialog.Footer>
-									<Button type="submit">Save</Button>
-								</Dialog.Footer>
-							</Dialog.Content>
-						</Dialog.Root>
-						<Dialog.Root>
-							<!-- delete ingredient -->
-							<Dialog.Trigger>
-								<Button variant="ghost" size="icon">
-									<Trash2 class="h-5 w-5" />
-								</Button>
-							</Dialog.Trigger>
-							<Dialog.Content class="max-w-xs rounded-lg sm:max-w-[425px]">
-								<Dialog.Header>
-									<Dialog.Title>Are you sure you want to delete this ingredient?</Dialog.Title>
-									<Dialog.Description>
-										Clicking delete removes all information of the ingredient and cannot be undone.
-									</Dialog.Description>
-								</Dialog.Header>
-								<Dialog.Footer class="flex flex-col gap-y-4 sm:flex-row sm:gap-y-0">
-									<Button variant="outline">No</Button>
-									<Button variant="destructive">Yes</Button>
-								</Dialog.Footer>
-							</Dialog.Content>
-						</Dialog.Root>
-					</div>
-				</li>
+		<ul class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
+			{#each containers as container (container.id)}
+				<a href="/app/dashboard/{container.id}">
+					<li
+						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
+					>
+						<div>
+							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
+							<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
+						</div>
+					</li>
+				</a>
 			{/each}
-		</div>
+		</ul>
 
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
 					<div class="fixed bottom-7 right-7">
-						<Button builders={[builder]} class="p-7 items-center">
+						<Button builders={[builder]} class="items-center p-7">
 							<Plus class="mr-2 h-5 w-5" />
 							<p class="text-lg font-bold">Add</p>
 						</Button>
@@ -118,7 +93,7 @@
 			<Drawer.Root bind:open>
 				<Drawer.Trigger asChild let:builder>
 					<div class="fixed bottom-7 right-7">
-						<Button builders={[builder]} class="p-7 items-center">
+						<Button builders={[builder]} class="items-center p-7">
 							<Plus class="mr-2 h-5 w-5" />
 							<p class="text-lg font-bold">Add</p>
 						</Button>
