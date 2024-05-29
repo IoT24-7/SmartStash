@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	// @ts-nocheck
 	export let data;
 	import { mediaQuery } from 'svelte-legos';
@@ -13,32 +13,54 @@
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Label } from '$lib/components/ui/label/index.ts';
 	import { Input } from '$lib/components/ui/input/index.ts';
+	import { db } from '$lib/firebase';
+	import { doc, onSnapshot } from 'firebase/firestore';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
 	// console.log(containerData);
+	let container: Containers[] = [];
+	const setupContainerListener = () => {
+		const containerDoc = doc(db, 'containers', containerData);
+		onSnapshot(containerDoc, (docSnapshot) => {
+			if (docSnapshot.exists()) {
+				const data = docSnapshot.data();
+				const fetchedContainer: Containers = {
+					id: docSnapshot.id,
+					currentWeight: data.currentWeight,
+					foodName: data.foodName,
+					status: data.status,
+					threshold: data.threshold,
+					userId: data.userId
+				};
+				container = fetchedContainer;
+			}
+			console.log(container);
+		});
+	};
+	setupContainerListener();
 </script>
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col items-center gap-2 px-5 py-4 sm:mt-3">
-		<div class="flex w-full flex-row items-center justify-between sm:hidden">
+		<div class="flex w-full flex-row items-center justify-between p-0.5">
 			<Button variant="ghost" size="icon" href="/app/dashboard">
 				<ArrowLeft class="h-5 w-5" />
 			</Button>
 		</div>
 		<h2 class="scroll-m-20 text-3xl font-extrabold tracking-tight">
-			{containerData.foodName}
+			{container.foodName}
 		</h2>
 		<div class="flex h-full w-full flex-col gap-4 p-4 sm:max-w-[480px]">
 			<Card.Root class="w-full">
 				<Card.Header class="pb-2">
-					<Card.Title class="text-accent-foreground text-lg font-medium tracking-tight"
+					<Card.Title class="text-lg font-medium tracking-tight text-accent-foreground"
 						>Status</Card.Title
 					>
 				</Card.Header>
 				<Card.Content class="flex items-center gap-4">
-					{#if containerData.status}
+					{#if container.status}
 						<p class="text-2xl font-bold tracking-tight">Connected</p>
 						<Wifi class=" h-6 w-6" />
 					{:else}
@@ -49,24 +71,24 @@
 			</Card.Root>
 			<Card.Root class="w-full">
 				<Card.Header class="pb-2">
-					<Card.Title class="text-accent-foreground text-lg font-medium tracking-tight"
+					<Card.Title class="text-lg font-medium tracking-tight text-accent-foreground"
 						>Current Weight</Card.Title
 					>
 				</Card.Header>
 				<Card.Content class="flex items-center gap-4">
 					<p class="text-2xl font-bold tracking-tight">
-						{containerData.currentWeight} g
+						{container.currentWeight} g
 					</p></Card.Content
 				>
 			</Card.Root>
 			<Card.Root class="w-full">
 				<Card.Header class="pb-2">
-					<Card.Title class="text-accent-foreground text-lg font-medium tracking-tight"
+					<Card.Title class="text-lg font-medium tracking-tight text-accent-foreground"
 						>Threshold</Card.Title
 					>
 				</Card.Header>
 				<Card.Content class="flex items-center gap-4">
-					<p class="text-2xl font-bold tracking-tight">{containerData.threshold} g</p></Card.Content
+					<p class="text-2xl font-bold tracking-tight">{container.threshold} g</p></Card.Content
 				>
 			</Card.Root>
 
