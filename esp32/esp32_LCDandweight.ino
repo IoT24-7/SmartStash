@@ -11,9 +11,9 @@
 #include "addons/RTDBHelper.h" //Provide the RTDB payload printing info and other helper functions.
 
 // NTP server
-const char* ntpServer = "pool.ntp.org";
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
+const char* ntpServer = "time.google.com";
+const long  gmtOffset_sec = 28800;
+const int   daylightOffset_sec = 0;
 
 // HX711 module pins
 const int LOADCELL_DOUT_PIN = 16;
@@ -30,34 +30,35 @@ HX711 scale;
 // Initialize the LCD object
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLUMNS, LCD_ROWS);
 
-// DEFINITIONS FOR FIREBASE
 // Insert your network credentials
-#define WIFI_SSID "beyatris"
-#define WIFI_PASSWORD "HS130179"
+#define WIFI_SSID "s3wifi"
+#define WIFI_PASSWORD "IceBukoPie2019"
 
 // Insert Firebase project API Key
 #define API_KEY "AIzaSyD3qNpR_UAi5sXHIX4Way38C-uELvnxkdk"
 
-// Insert RTDB URLefine the RTDB URL */
+// Insert RTDB URL
 #define DATABASE_URL "https://cs145-smartstash-default-rtdb.asia-southeast1.firebasedatabase.app/" 
 
-//Define Firebase Data object
+// Define Firebase Data object
 FirebaseData stream;
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 FirebaseJson json;
 
+// Define Firebase RTDB paths
 String devicePath = "containers/" + WiFi.macAddress();
-String labelPath = "/label";
-String weightPath = "/weight";
-String thresholdPath = "/threshold";
-String timestampPath = "/timestamp";
+String labelPath = devicePath + "/label";
+String weightPath = devicePath + "/weight";
+String thresholdPath = devicePath + "/threshold";
+String statusPath = devicePath + "/status";
+String timestampPath = devicePath + "/timestamp";
 
 unsigned long sendDataPrevMillis = 0;
 int count = 0;
 bool signupOK = false;
-int timestamp;
+String timestamp;
 
 String label;
 
@@ -72,6 +73,23 @@ void setupwifi() {
   Serial.print("Connected with IP: ");
   Serial.println(WiFi.localIP());
   Serial.println();
+}
+
+String printLocalTime() {
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return "Failed to obtain time";
+  }
+  char timeStringBuff[20]; // Allocate a buffer to hold the formatted time string
+  sprintf(timeStringBuff, "%04d-%02d-%02d %02d:%02d:%02d",
+                timeinfo.tm_year + 1900,
+                timeinfo.tm_mon + 1,
+                timeinfo.tm_mday,
+                timeinfo.tm_hour,
+                timeinfo.tm_min,
+                timeinfo.tm_sec);
+  return String(timeStringBuff);
 }
 
 void setupfirebase(){
@@ -91,12 +109,6 @@ void setupfirebase(){
   
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
-
-  if (!Firebase.RTDB.beginStream(&stream, devicePath.c_str())) {
-    Serial.printf("stream begin error, %s\n\n", stream.errorReason().c_str());
-  }
-
-  Firebase.RTDB.setStreamCallback(&stream, streamCallback, streamTimeoutCallback);
 }
 
 void streamTimeoutCallback(bool timeout) {
@@ -106,45 +118,9 @@ void streamTimeoutCallback(bool timeout) {
     Serial.printf("error code: %d, reason %s\n\n", stream.httpCode(), stream.errorReason().c_str());
 }
 
-unsigned long getTime() {
-  time_t now;
-  struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    return(0);
-  }
-  time(&now);
-  return now;
-}
-
-void streamCallback(FirebaseStream data) {
-  String streamPath = String(data.dataPath());
-
-  if (streamPath == devicePath + "/threshold") {
-    Serial.println("here");
-  }
-
-  // if data returned is a float, there was a change on the threshold
-  if (data.dataTypeEnum() == fb_esp_rtdb_data_type_float) {
-    float threshold = data.floatData();
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Threshold updated:");
-    lcd.setCursor(0, 1);
-    lcd.print(threshold, 1); // displays up to one decimal 
-    lcd.print(" g");
-  } else if (data.dataTypeEnum() == fb_esp_rtdb_data_type_string) {
-    String newLabel = data.stringData();
-    label = newLabel;
-  }
-
-  delay(2000);
-}
 
 void setup() {
   Serial.begin(115200);
-  configTime(0, 0, ntpServer);
-  
-  timeClient.begin();
 
   // Initialize the HX711 scale
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
@@ -158,17 +134,17 @@ void setup() {
 
   setupwifi();
   setupfirebase();
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
 void loop() {
   scale.power_down();              // put the ADC in sleep mode
-  delay(5000);                     // sometimes doesn't print if there's no delay
+  delay(10000);
   scale.power_up();
 
   // Display the current weight on the LCD 
   lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Weight:");
   lcd.setCursor(0, 1);
   lcd.print(scale.get_units(), 1); // displays up to one decimal 
   lcd.print(" g");
@@ -177,14 +153,30 @@ void loop() {
     if (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0) {
       sendDataPrevMillis = millis();
 
-      // Write the current reading on the database path testData2/container1/currentWeight
-      timeClient.update();
-      timestamp = getTime();
-      Serial.println(timeClient.getFormattedTime());
-      
-      json.set(weightPath.c_str(), scale.get_units());
-      json.set(timestampPath.c_str(), String(timestamp));
-      Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, devicePath.c_str(), &json) ? "ok" : stream.errorReason().c_str());
+      timestamp = printLocalTime();
+
+      if (Firebase.RTDB.setFloat(&fbdo, weightPath.c_str(), scale.get_units())) {
+        Serial.println("updated weight");
+      } else {
+        Serial.println("failed to update weight");
+      }
+
+      if (Firebase.RTDB.setString(&fbdo, timestampPath.c_str(), timestamp)) {
+        Serial.println("updated time");
+      } else {
+        Serial.println("failed to update time");
+      }
+
+      if (Firebase.RTDB.getString(&fbdo, labelPath)) {
+        if (fbdo.dataType() == "string") {
+          label = fbdo.stringData();
+        }
+      } else {
+        Serial.println(fbdo.errorReason()); //print he error (if any)
+      }
     }
   }
+
+  lcd.setCursor(0, 0);
+  lcd.print(label);
 }
