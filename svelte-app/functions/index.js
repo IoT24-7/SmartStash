@@ -53,7 +53,7 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
                 userID: origUserID
             };
 
-            return admin.firestore().collection(`users/${id}/notifications`).doc().add(notificationData);
+            return admin.firestore().collection(`users/${origUserID}/notifications`).doc().add(notificationData);
 
         }
         
