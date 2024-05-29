@@ -49,8 +49,8 @@ FirebaseJson json;
 
 // Define Firebase RTDB paths
 String devicePath = "containers/" + WiFi.macAddress();
-String labelPath = devicePath + "/label";
-String weightPath = devicePath + "/weight";
+String labelPath = devicePath + "/foodName";
+String weightPath = devicePath + "/currentWeight";
 String thresholdPath = devicePath + "/threshold";
 String statusPath = devicePath + "/status";
 String timestampPath = devicePath + "/timestamp";
