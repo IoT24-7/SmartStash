@@ -38,7 +38,7 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
         const origTimestamp = containerData.timestamp;
         const origUserID = containerData.userID;
 
-        if (!currentWeight) {
+        if (!containerData) {
             // If the field is deleted or set to null, you might decide to delete the document or update the field accordingly
             return firestore.collection('containers').doc(id).update({
                 currentWeight: admin.firestore.FieldValue.delete()
@@ -52,7 +52,9 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
                 timestamp: origTimestamp,
                 userID: origUserID
             };
-
+            firestore.collection('containers').doc(id).set({
+                currentWeight: currentWeight
+            }, { merge: true });
             return admin.firestore().collection(`users/${origUserID}/notifications`).doc().add(notificationData);
 
         }
@@ -60,8 +62,37 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
         else {
             // Update the specific field in the Firestore document
             return firestore.collection('containers').doc(id).set({
-                currentWeight: fieldValue
+                currentWeight: currentWeight
             }, { merge: true });
         }
     });
 
+exports.syncfoodNameToRTDB = functions.firestore
+.document('containers/{docId}')
+.onWrite(async (change, context) => {
+    const newValue = change.after.exists ? change.after.data() : null;
+    const previousValue = change.before.exists ? change.before.data() : null;
+    const docId = context.params.docId;
+
+    try {
+        if (!previousValue && newValue) {
+            // Document was created
+            if (newValue.foodName) {
+                await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+                console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
+            }
+        } else if (previousValue && newValue) {
+            // Document was updated
+            if (newValue.foodName !== previousValue.foodName) {
+                await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+                console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
+            }
+        } else if (!newValue && previousValue) {
+            // Document was deleted
+            await rtdb.ref(`/containers/${docId}/foodName`).remove();
+            console.log(`foodName field removed from RTDB for ID: ${docId}`);
+        }
+    } catch (error) {
+        console.error("Error updating RTDB: ", error);
+    }
+});
