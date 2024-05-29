@@ -15,7 +15,7 @@
 	import { Input } from '$lib/components/ui/input/index.ts';
 	import { db } from '$lib/firebase';
 	import { doc, onSnapshot } from 'firebase/firestore';
-	
+
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
@@ -36,7 +36,7 @@
 				};
 				container = fetchedContainer;
 			}
-			// console.log('container:', container);
+			console.log(container);
 		});
 	};
 	setupContainerListener();
@@ -44,7 +44,7 @@
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col items-center gap-2 px-5 py-4 sm:mt-3">
-		<div class="flex w-full flex-row items-center justify-between sm:hidden">
+		<div class="flex w-full flex-row items-center justify-between p-0.5">
 			<Button variant="ghost" size="icon" href="/app/dashboard">
 				<ArrowLeft class="h-5 w-5" />
 			</Button>
