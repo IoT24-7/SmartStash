@@ -48,12 +48,12 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
             //add a new entry sa users/{id}/notifications/{id}
             const notificationData = {
                 foodData: origfoodData,
-                id: containerData,
+                id: id,
                 timestamp: origTimestamp,
                 userID: origUserID
             };
 
-            return admin.firestore().collection(`users/{id}/notifications`).doc().set(notificationData);
+            return admin.firestore().collection(`users/${id}/notifications`).doc().add(notificationData);
 
         }
         
