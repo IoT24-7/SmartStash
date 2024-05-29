@@ -88,7 +88,9 @@
 					>
 				</Card.Header>
 				<Card.Content class="flex items-center gap-4">
-					<p class="text-2xl font-bold tracking-tight">{container.threshold} g</p></Card.Content
+					<p class={`text-2xl font-bold tracking-tight ${container.threshold === undefined ? 'text-muted-foreground' : ''}`}>
+						{container.threshold === undefined ? 'Not yet set' : `${container.threshold} g`}
+					</p></Card.Content
 				>
 			</Card.Root>
 

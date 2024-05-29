@@ -1,7 +1,4 @@
 // See https://kit.svelte.dev/docs/types#app
-// import type { Timestamp } from "firebase/firestore";
-
-import type { StringToBoolean } from "tailwind-variants";
 
 // for information about these interfaces
 declare global {
@@ -27,7 +24,7 @@ export interface Containers {
 	foodName: string;
 	status: boolean;
 	threshold: number;
-	userId: string;	
+	userId: [];	
 }
 
 export {};
