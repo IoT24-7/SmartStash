@@ -18,7 +18,7 @@ export interface Notifs {
 	id: string;
 	userID: string;
 	foodItem: string;
-	timestamp: Date;
+	timestamp: number;
 }
 
 export interface Containers {

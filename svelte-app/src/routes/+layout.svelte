@@ -18,6 +18,7 @@
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { resetMode, setMode } from 'mode-watcher';
+
 	const appName = 'SmartStash';
 	let title = appName;
 	$: {
