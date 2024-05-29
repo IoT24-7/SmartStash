@@ -26,7 +26,7 @@ admin.initializeApp();
 const firestore = admin.firestore();
 const rtdb = admin.database();
 
-exports.syncFieldToFirestore = functions.database.ref('/testData2/{id}/currentWeight')
+exports.syncFieldToFirestore = functions.database.ref('/containers/{id}/currentWeight')
     .onWrite((change, context) => {
         const fieldValue = change.after.val();
         const id = context.params.id;
@@ -43,4 +43,36 @@ exports.syncFieldToFirestore = functions.database.ref('/testData2/{id}/currentWe
             }, { merge: true });
         }
     });
+
+
+exports.syncfoodNameToRTDB = functions.firestore
+    .document('containers/{docId}')
+    .onWrite(async (change, context) => {
+        const newValue = change.after.exists ? change.after.data() : null;
+        const previousValue = change.before.exists ? change.before.data() : null;
+        const docId = context.params.docId;
+
+        try {
+            if (!previousValue && newValue) {
+                // Document was created
+                if (newValue.foodName) {
+                    await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+                    console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
+                }
+            } else if (previousValue && newValue) {
+                // Document was updated
+                if (newValue.foodName !== previousValue.foodName) {
+                    await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+                    console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
+                }
+            } else if (!newValue && previousValue) {
+                // Document was deleted
+                await rtdb.ref(`/containers/${docId}/foodName`).remove();
+                console.log(`foodName field removed from RTDB for ID: ${docId}`);
+            }
+        } catch (error) {
+            console.error("Error updating RTDB: ", error);
+        }
+    });
+
 
