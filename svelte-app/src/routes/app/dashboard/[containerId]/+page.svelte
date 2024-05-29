@@ -41,18 +41,18 @@
 	};
 	setupContainerListener();
 
-	import { deleteDoc, updateDoc } from "firebase/firestore";
+	import { deleteDoc, updateDoc } from 'firebase/firestore';
 
 	const deleteContainer = async (container) => {
-    	await deleteDoc(doc(db, 'containers', container.id));
-  	};
+		await deleteDoc(doc(db, 'containers', container.id));
+	};
 
-	let newFoodName = "";
+	let newFoodName = '';
 	const updateContainer = async (container) => {
-    	await updateDoc(doc(db, 'containers', container.id), {
+		await updateDoc(doc(db, 'containers', container.id), {
 			foodName: newFoodName
-    });
-  };
+		});
+	};
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -123,15 +123,19 @@
 						<div class="grid gap-4 py-4">
 							<div class="flex items-center gap-4">
 								<Label for="name" class="flex-shrink-0 text-right">Ingredient Name</Label>
-								<Input id="current_input_name" type="test" placeholder={container.foodName} class="flex-grow" bind:value={newFoodName}/>
+								<Input
+									id="current_input_name"
+									type="text"
+									placeholder={container.foodName}
+									class="flex-grow"
+									bind:value={newFoodName}
+								/>
 							</div>
 						</div>
 						<!-- Save Button: should update database when clicked -->
 						<Dialog.Footer>
 							<Dialog.Close>
-							<Button type="submit" on:click={() => updateContainer(container)}>
-								Save
-							</Button>
+								<Button type="submit" on:click={() => updateContainer(container)}>Save</Button>
 							</Dialog.Close>
 						</Dialog.Footer>
 					</Dialog.Content>
@@ -181,12 +185,17 @@
 						<form class="grid items-start gap-4 px-4">
 							<div class="grid gap-2">
 								<Label for="name" class="flex-shrink-0 text-left">Ingredient Name</Label>
-								<Input id="current_input_name" placeholder={container.foodName} class="flex-grow" bind:value={newFoodName}/>
+								<Input
+									id="current_input_name"
+									placeholder={container.foodName}
+									class="flex-grow"
+									bind:value={newFoodName}
+								/>
 							</div>
 							<Dialog.Close>
-								<Button type="submit" on:click={() => updateContainer(container)}>
-									Save
-								</Button>
+								<Button class="w-full" type="submit" on:click={() => updateContainer(container)}
+									>Save</Button
+								>
 							</Dialog.Close>
 						</form>
 						<Drawer.Footer class="pt-2"></Drawer.Footer>
@@ -210,7 +219,11 @@
 							<Button variant="outline" class="max-sm:hidden">No</Button>
 							<!-- DELETE BUTTON FOUND HERE -->
 							<a href="/app/dashboard">
-								<Button variant="destructive" class="w-full" on:click={() => deleteContainer(container)}>
+								<Button
+									variant="destructive"
+									class="w-full"
+									on:click={() => deleteContainer(container)}
+								>
 									Yes
 								</Button>
 							</a>
