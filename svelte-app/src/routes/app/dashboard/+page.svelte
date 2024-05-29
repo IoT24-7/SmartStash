@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { db } from '$lib/firebase';
+	import { collection, onSnapshot } from 'firebase/firestore';
+	import type { Containers } from '../../../app';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
@@ -11,8 +14,33 @@
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 
-	export let data;
-	const containers = data.containers;
+	let containers: Containers[] = [];
+	const setupContainersListener = () => {
+		const containersCollection = collection(db, 'containers');
+		onSnapshot(
+			containersCollection,
+			(snapshot) => {
+				const fetchedContainers: Containers[] = snapshot.docs.map((doc) => {
+					const data = doc.data();
+					return {
+						id: doc.id,
+						currentWeight: data.currentWeight,
+						foodName: data.foodName,
+						status: data.status,
+						threshold: data.threshold,
+						userId: data.userId
+					} as Containers;
+				});
+				containers = [...fetchedContainers];
+				console.log(containers);
+			},
+			(error) => {
+				console.error('Error fetching containers:', error);
+			}
+		);
+	};
+
+	setupContainersListener();
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -25,11 +53,11 @@
 			{#each containers as container (container.id)}
 				<a href="/app/dashboard/{container.id}">
 					<li
-						class="bg-card text-card-foreground mb-2 flex flex-row items-center justify-between rounded-lg border p-6 shadow-md"
+						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
 					>
 						<div>
 							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
-							<p class="sm:text-md text-muted-foreground text-sm">{container.currentWeight} g</p>
+							<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
 						</div>
 					</li>
 				</a>

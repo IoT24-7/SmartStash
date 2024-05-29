@@ -6,44 +6,7 @@
 	import type { Notifs } from '../../../app';
 	import { Trash2 } from 'lucide-svelte';
 
-	let userID: string | undefined = '';
-	$: userID = $page.data.session?.user?.id;
-
-	// dummy data
-	// const notifications = [
-	// 	// id = notification id for creation and deletion
-	// 	// userID
-	// 	// foodItem
-	// 	// TODO: Implement notification in backend
-
-	// 	{
-	// 		id: 1,
-	// 		userID: 1,
-	// 		foodItem: 'Rice'
-	// 	},
-
-	// 	{
-	// 		id: 2,
-	// 		userID: 1,
-	// 		foodItem: 'Cereal'
-	// 	},
-
-	// 	{
-	// 		id: 3,
-	// 		userID: 1,
-	// 		foodItem: 'Garlic'
-	// 	},
-
-	// 	{
-	// 		id: 4,
-	// 		userID: 1,
-	// 		foodItem: 'Onion'
-	// 	}
-	// ];
-
-	// check app.d.ts file for notif type
-	// notifications is an array of notifs
-
+	let userID = $page.data.session?.user?.id;
 	let notifications: Notifs[] = [];
 
 	const setupNotificationListener = (uid: string) => {
@@ -100,19 +63,14 @@
 	};
 
 	// Initialize userID and set up listener once
-	$: {
-		userID = $page.data.session?.user?.id;
-		if (userID) {
-			setupNotificationListener(userID);
-		} else {
-			console.warn('User ID is not defined');
-		}
+	if (userID) {
+		setupNotificationListener(userID);
 	}
 </script>
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
-		<h2 class="scroll-m-20 sm:mt-3 py-4 text-3xl font-extrabold tracking-tight">Notifications</h2>
+		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Notifications</h2>
 		<ul class="flex flex-col gap-2">
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
