@@ -18,12 +18,9 @@
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { resetMode, setMode } from 'mode-watcher';
-	import { onMount } from 'svelte';
-	import { saveMessagingDeviceToken, requestNotificationsPermissions } from '$lib/messaging';
 
 	const appName = 'SmartStash';
 	let title = appName;
-
 	$: {
 		if ($page.url.pathname.startsWith('/app')) {
 			let pathParts = $page.url.pathname.split('/');
