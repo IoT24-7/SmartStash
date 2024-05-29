@@ -54,7 +54,7 @@
 							<Button variant="ghost" class="h-auto items-start justify-start" builders={[builder]}>
 								<div class="flex flex-row items-center gap-2">
 									<Avatar.Root class="h-8 w-8">
-										<Avatar.Image src={$page.data.session.user.image} />
+										<Avatar.Image src={$page.data.session.user.image} alt={$page.data.session.user.name} />
 										<Avatar.Fallback
 											>{$page.data.session?.user?.name[0]}{$page.data.session?.user?.name
 												.split(' ')
@@ -107,7 +107,7 @@
 						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 							'/app/dashboard'
 						)
-							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 							: ''}"
 					>
 						<div class="flex items-center gap-4 px-4">
@@ -121,7 +121,7 @@
 						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 							'/app/shopping-list'
 						)
-							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 							: ''}"
 					>
 						<div href="/app/shopping-list" class="flex items-center gap-4 px-4">
@@ -135,7 +135,7 @@
 						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 							'/app/notifications'
 						)
-							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 							: ''}"
 					>
 						<div class="flex items-center gap-4 px-4">
@@ -151,7 +151,7 @@
 						class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 							'/app/settings'
 						)
-							? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+							? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 							: ''}"
 					>
 						<div class="flex items-center gap-4 px-4">
@@ -220,7 +220,7 @@
 									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 										'/app/dashboard'
 									)
-										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 										: ''}"
 								>
 									<div class="flex items-center gap-4 px-4">
@@ -234,7 +234,7 @@
 									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 										'/app/shopping-list'
 									)
-										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 										: ''}"
 								>
 									<div class="flex items-center gap-4 px-4">
@@ -248,7 +248,7 @@
 									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 										'/app/notifications'
 									)
-										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 										: ''}"
 								>
 									<div class="flex items-center gap-4 px-4">
@@ -262,7 +262,7 @@
 									class="colors flex w-full justify-start rounded-lg py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground {$page.route.id?.startsWith(
 										'/app/settings'
 									)
-										? 'bg-primary/30 text-primary hover:bg-primary/30 hover:text-primary'
+										? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
 										: ''}"
 								>
 									<div class="flex items-center gap-4 px-4">
