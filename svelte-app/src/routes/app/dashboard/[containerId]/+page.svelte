@@ -1,6 +1,7 @@
 <script lang="ts">
 	// @ts-nocheck
 	export let data;
+	import { page } from '$app/stores';
 	import { mediaQuery } from 'svelte-legos';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card/index.ts';
@@ -11,12 +12,14 @@
 	import { Trash2 } from 'lucide-svelte';
 	import { Minus } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
+	import { CircleMinus } from 'lucide-svelte';
+	import { Unlink } from 'lucide-svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.ts';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Label } from '$lib/components/ui/label/index.ts';
 	import { Input } from '$lib/components/ui/input/index.ts';
 	import { db } from '$lib/firebase';
-	import { doc, onSnapshot, deleteDoc, updateDoc } from 'firebase/firestore';
+	import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
@@ -44,8 +47,10 @@
 	};
 	setupContainerListener();
 
-	const deleteContainer = async (container) => {
-		await deleteDoc(doc(db, 'containers', container.id));
+	const removeContainer = async (container) => {
+		await updateDoc(doc(db, 'containers', container.id), {
+			userId: arrayRemove($page.data.session?.user?.id)
+		});
 	};
 
 	let newFoodName = '';
@@ -213,14 +218,14 @@
 					<!-- delete ingredient -->
 					<Dialog.Trigger>
 						<Button variant="outline" class="w-full text-red-500 hover:text-red-500">
-							<Trash2 class="mx-2 h-4 w-4" /> Delete
+							<CircleMinus class="mx-2 h-4 w-4" />Remove
 						</Button>
 					</Dialog.Trigger>
 					<Dialog.Content class="max-w-xs rounded-lg sm:max-w-[425px]">
 						<Dialog.Header>
-							<Dialog.Title>Are you sure you want to delete this ingredient?</Dialog.Title>
+							<Dialog.Title>Are you sure you want to unlink from this container?</Dialog.Title>
 							<Dialog.Description>
-								Clicking delete removes all information of the ingredient and cannot be undone.
+								Clicking remove disconnects you from the device. This cannot be undone.
 							</Dialog.Description>
 						</Dialog.Header>
 						<Dialog.Footer class="flex flex-col gap-y-4 sm:flex-row sm:gap-y-0">
@@ -229,7 +234,7 @@
 							</Dialog.Close>
 							<!-- DELETE BUTTON FOUND HERE -->
 							<a href="/app/dashboard">
-								<Button variant="destructive" on:click={() => deleteContainer(container)}>
+								<Button variant="destructive" on:click={() => removeContainer(container)}>
 									Yes
 								</Button>
 							</a>
@@ -274,14 +279,14 @@
 					<!-- delete ingredient -->
 					<Drawer.Trigger>
 						<Button variant="outline" class="w-full text-red-500 hover:text-red-500">
-							<Trash2 class="mx-2 h-4 w-4" /> Delete
+							<CircleMinus class="mx-2 h-4 w-4" />Remove
 						</Button>
 					</Drawer.Trigger>
 					<Drawer.Content>
 						<Drawer.Header class="text-left">
-							<Drawer.Title>Are you sure you want to delete this ingredient?</Drawer.Title>
+							<Drawer.Title>Are you sure you want to unlink from this container?</Drawer.Title>
 							<Drawer.Description>
-								Clicking delete removes all information of the ingredient and cannot be undone.
+								Clicking remove disconnects you from the device. This cannot be undone.
 							</Drawer.Description>
 						</Drawer.Header>
 						<Drawer.Footer class="pt-2">
@@ -291,7 +296,7 @@
 								<Button
 									variant="destructive"
 									class="w-full"
-									on:click={() => deleteContainer(container)}
+									on:click={() => removeContainer(container)}
 								>
 									Yes
 								</Button>

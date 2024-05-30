@@ -14,11 +14,12 @@
 	export let data: PageData;
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
+	let uid = $page.data.session?.user?.id;
 
 	let containers: Containers[] = [];
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
-		const q = query(containersCollection, where('foodName', '!=', null));
+		const q = query(containersCollection, where("userId", "array-contains", uid));
 		onSnapshot(
 			q,
 			(snapshot) => {
@@ -69,7 +70,7 @@
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
-					<div class="fixed bottom-7 right-7">
+					<div class="fixed bottom-7 right-7 drop-shadow-xl">
 						<Button builders={[builder]} class="items-center p-7">
 							<Plus class="mr-2 h-5 w-5" />
 							<p class="text-lg font-bold">Add</p>
@@ -78,8 +79,8 @@
 				</Dialog.Trigger>
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
-						<Dialog.Title>Add Ingredient</Dialog.Title>
-						<Dialog.Description>Enter the details of your new ingredient here.</Dialog.Description>
+						<Dialog.Title>Add Container</Dialog.Title>
+						<Dialog.Description>Enter the details of your new SmartStash device here.</Dialog.Description>
 					</Dialog.Header>
 					<DashboardForm data={data.form} />
 				</Dialog.Content>
@@ -96,8 +97,8 @@
 				</Drawer.Trigger>
 				<Drawer.Content>
 					<Drawer.Header class="text-left">
-						<Drawer.Title>Add Ingredient</Drawer.Title>
-						<Drawer.Description>Enter the details of your new ingredient here.</Drawer.Description>
+						<Drawer.Title>Add Container</Drawer.Title>
+						<Drawer.Description>Enter the details of your new SmartStash device here.</Drawer.Description>
 						<DashboardForm data={data.form} />
 					</Drawer.Header>
 					<Drawer.Footer class="pt-0">
