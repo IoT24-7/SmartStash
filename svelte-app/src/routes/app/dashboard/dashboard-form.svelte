@@ -5,6 +5,7 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { Link } from 'lucide-svelte';
 
 	export let data: SuperValidated<Infer<FormSchema>>;
 
@@ -52,5 +53,5 @@
 			{/each}
 		</Form.FieldErrors>
 	</Form.Field>
-	<Form.Button>Submit</Form.Button>
+	<Form.Button><Link class="mr-2 h-4 w-4"/>Connect</Form.Button>
 </form>
