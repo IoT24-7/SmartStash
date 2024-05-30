@@ -34,7 +34,8 @@
 					foodName: data.foodName,
 					status: data.status,
 					threshold: data.threshold,
-					userId: data.userId
+					userId: data.userId,
+					goal: data.threshold !== undefined ? data.threshold : 350
 				};
 				container = fetchedContainer;
 			}
@@ -48,14 +49,18 @@
 	};
 
 	let newFoodName = '';
-	const updateContainer = async (container) => {
+	const updateName = async (container) => {
 		await updateDoc(doc(db, 'containers', container.id), {
 			foodName: newFoodName
 		});
 	};
-
+	const updateThreshold = async (container) => {
+		await updateDoc(doc(db, 'containers', container.id), {
+			threshold: container.goal
+		});
+	};
 	function handleClick(adjustment: number) {
-		container.threshold = Math.max(100, Math.min(900, container.threshold + adjustment));
+		container.goal = Math.max(100, Math.min(900, container.goal + adjustment));
 	}
 </script>
 
@@ -132,16 +137,14 @@
 												size="icon"
 												class="h-8 w-8 shrink-0 rounded-full"
 												on:click={() => handleClick(-10)}
-												disabled={container.threshold <= 100}
+												disabled={container.goal <= 100}
 											>
 												<Minus class="h-4 w-4" />
 												<span class="sr-only">Decrease</span>
 											</Button>
 											<div class="flex-1 text-center">
 												<div class="text-7xl font-bold tracking-tighter">
-													{container.threshold !== undefined
-														? container.threshold
-														: (container.threshold = 350)}
+													{container.goal}
 												</div>
 												<div class="text-[0.70rem] uppercase text-muted-foreground">grams</div>
 											</div>
@@ -157,8 +160,10 @@
 										</div>
 									</div>
 									<Drawer.Footer>
-										<Button>Set Threshold</Button>
 										<Drawer.Close asChild let:builder>
+											<Button builders={[builder]} on:click={() => updateThreshold(container)}
+												>Set Threshold</Button
+											>
 											<Button builders={[builder]} variant="outline">Cancel</Button>
 										</Drawer.Close>
 									</Drawer.Footer>
@@ -199,7 +204,7 @@
 						<!-- Save Button: should update database when clicked -->
 						<Dialog.Footer>
 							<Dialog.Close>
-								<Button type="submit" on:click={() => updateContainer(container)}>Save</Button>
+								<Button type="submit" on:click={() => updateName(container)}>Save</Button>
 							</Dialog.Close>
 						</Dialog.Footer>
 					</Dialog.Content>
@@ -257,7 +262,7 @@
 								/>
 							</div>
 							<Dialog.Close>
-								<Button class="w-full" type="submit" on:click={() => updateContainer(container)}
+								<Button class="w-full" type="submit" on:click={() => updateName(container)}
 									>Save</Button
 								>
 							</Dialog.Close>
