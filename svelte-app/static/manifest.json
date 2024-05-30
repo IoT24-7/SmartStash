@@ -5,6 +5,7 @@
 	"display": "standalone",
 	"theme_color": "#2563eb",
 	"background_color": "#fff",
+	"gcm_sender_id": "985579041843",
 	"description": "Track remaining food in the pantry right in your device.",
 	"screenshots": [
 		{
