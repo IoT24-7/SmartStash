@@ -7,7 +7,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Firebase_ESP_Client.h>
-#include "addons/TokenHelper.h" //Provide the token generation process info.
+#include "addons/TokenHelper.h" //Poipuopoioip[op[]]i[][p]oop[]p[pp[]jhgghvvrovide the token generation process info.
 #include "addons/RTDBHelper.h" //Provide the RTDB payload printing info and other helper functions.
 
 // NTP server
@@ -31,8 +31,8 @@ HX711 scale;
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLUMNS, LCD_ROWS);
 
 // Insert your network credentials
-#define WIFI_SSID "s3wifi"
-#define WIFI_PASSWORD "IceBukoPie2019"
+#define WIFI_SSID "DragonsDen"
+#define WIFI_PASSWORD "iotcup2024fusrodah"
 
 // Insert Firebase project API Key
 #define API_KEY "AIzaSyD3qNpR_UAi5sXHIX4Way38C-uELvnxkdk"
@@ -111,14 +111,6 @@ void setupfirebase(){
   Firebase.reconnectWiFi(true);
 }
 
-void streamTimeoutCallback(bool timeout) {
-  if (timeout)
-    Serial.println("stream timeout, resuming...\n");
-  if (!stream.httpConnected())
-    Serial.printf("error code: %d, reason %s\n\n", stream.httpCode(), stream.errorReason().c_str());
-}
-
-
 void setup() {
   Serial.begin(115200);
 
@@ -132,30 +124,41 @@ void setup() {
   lcd.init();
   lcd.backlight();
 
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connecting...");
+
   setupwifi();
   setupfirebase();
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connected!");
 }
 
 void loop() {
   scale.power_down();              // put the ADC in sleep mode
-  delay(10000);
+  delay(5000);
   scale.power_up();
+
+  int weight = round(scale.get_units() - 208);
 
   // Display the current weight on the LCD 
   lcd.clear();
   lcd.setCursor(0, 1);
-  lcd.print(scale.get_units(), 1); // displays up to one decimal 
+  lcd.print(weight); // displays up to one decimal 
   lcd.print(" g");
 
   if (Firebase.ready() && signupOK) {
-    if (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0) {
+    if (millis() - sendDataPrevMillis > 20000 || sendDataPrevMillis == 0) {
       sendDataPrevMillis = millis();
 
       timestamp = printLocalTime();
+      Serial.println(weight);
 
-      if (Firebase.RTDB.setFloat(&fbdo, weightPath.c_str(), scale.get_units())) {
+      if (Firebase.RTDB.setInt(&fbdo, weightPath.c_str(), weight)) {
         Serial.println("updated weight");
       } else {
         Serial.println("failed to update weight");
