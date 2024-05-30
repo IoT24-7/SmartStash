@@ -49,32 +49,42 @@ exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
                 return null;
             }
             const firestoreData = doc.data();
-            const { threshold, foodData: origfoodData, timestamp: origTimestamp, userID: origUserID } = firestoreData;
+            const threshold = firestoreData.threshold
+            const foodName = firestoreData.foodName
+            const userId = firestoreData.userId
+            const currentTimestamp = Date.now();
+            const notificationID = firestore.collection('dummyCollection').doc().id;
 
             const currentWeight = containerData.currentWeight;
-            console.log(`${threshold}`)
             if (currentWeight < threshold) {
-                //add a new entry sa users/{id}/notifications/{id}
-                
-                const notificationData = {
-                    foodData: origfoodData,
-                    id: id,
-                    timestamp: origTimestamp,
-                    userID: origUserID
-                };
-                const notificationPromise = firestore.collection(`users/${origUserID}/notifications`).add(notificationData);
+                // Iterate over userIDs array to create notifications for each user
+                const notificationPromises = userId.map(user => {
+                    // Generate a random ID for the notification document
+                    // Prepare notification data
+                    const notificationData = {
+                        foodItem: foodName,
+                        timestamp: currentTimestamp,
+                        id: notificationID  // Assign the generated ID to the notification data
+                    };
+                // Add notification for each user
+                    return firestore.collection(`users/${user}/notifications`).doc(notificationID).set(notificationData);
+                });
+                // Update currentWeight and timestamp in the Firestore document
                 const weightUpdatePromise = docRef.set({
-                    currentWeight: currentWeight
+                    currentWeight: currentWeight,
+                    timestamp: currentTimestamp
                 }, { merge: true });
-                return Promise.all([notificationPromise, weightUpdatePromise])
+
+                // Wait for all promises to complete
+                return Promise.all([...notificationPromises, weightUpdatePromise])
                     .then(() => {
-                        console.log(`Notification added and currentWeight updated for container ID: ${id}`);
+                        console.log(`Notifications added and currentWeight updated for container ID: ${id}`);
                     })
                     .catch(error => {
-                        console.error("Error adding notification and updating currentWeight: ", error);
+                        console.error("Error adding notifications and updating currentWeight: ", error);
                     });
-    
-            }  else {
+                    
+            } else {
                 // Update the specific field in the Firestore document
                 return docRef.set({
                     currentWeight: currentWeight
@@ -141,11 +151,19 @@ exports.sendNotifications = functions.firestore.document('users/{userID}/notific
       allTokens.forEach((tokenDoc) => {
         tokens.push(tokenDoc.id);
       });
-  
+      
       if (tokens.length > 0) {
-        // Send notifications to all tokens.
-        const response = await admin.messaging().sendToDevice(tokens, payload);
-        await cleanupTokens(response, tokens);
+        //Subscribe all devices under tokens array
+        getMessaging().subscribeToTopic(registrationTekens, topic)
+            .then(async (response) => {
+                console.log('Successfully subscribed to topic:', response);
+                response = await admin.messaging().sendToDevice(tokens, payload);
+                await cleanupTokens(response, tokens);
+            })
+            .catch((error) => {
+                console.log('Error subscribing to topic:', error);
+            });
+        
         functions.logger.log('Notifications have been sent and tokens cleaned up.');
       }
     });
