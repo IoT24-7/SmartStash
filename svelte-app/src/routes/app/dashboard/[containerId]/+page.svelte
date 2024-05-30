@@ -9,12 +9,14 @@
 	import { WifiOff } from 'lucide-svelte';
 	import { SquarePen } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
+	import { Minus } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.ts';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Label } from '$lib/components/ui/label/index.ts';
 	import { Input } from '$lib/components/ui/input/index.ts';
 	import { db } from '$lib/firebase';
-	import { doc, onSnapshot } from 'firebase/firestore';
+	import { doc, onSnapshot, deleteDoc, updateDoc } from 'firebase/firestore';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
@@ -41,8 +43,6 @@
 	};
 	setupContainerListener();
 
-	import { deleteDoc, updateDoc } from 'firebase/firestore';
-
 	const deleteContainer = async (container) => {
 		await deleteDoc(doc(db, 'containers', container.id));
 	};
@@ -53,6 +53,10 @@
 			foodName: newFoodName
 		});
 	};
+
+	function handleClick(adjustment: number) {
+		container.threshold = Math.max(100, Math.min(900, container.threshold + adjustment));
+	}
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -101,10 +105,68 @@
 					>
 				</Card.Header>
 				<Card.Content class="flex items-center gap-4">
-					<p class={`text-2xl font-bold tracking-tight ${container.threshold === undefined ? 'text-muted-foreground' : ''}`}>
-						{container.threshold === undefined ? 'Not yet set' : `${container.threshold} g`}
-					</p></Card.Content
-				>
+					<div class="flex w-full flex-row items-center justify-between">
+						<p
+							class={`text-2xl font-bold tracking-tight ${container.threshold === undefined ? 'text-muted-foreground' : ''}`}
+						>
+							{container.threshold === undefined ? 'Not yet set' : `${container.threshold} g`}
+						</p>
+						<Drawer.Root>
+							<Drawer.Trigger asChild let:builder>
+								<Button builders={[builder]}
+									>{container.threshold === undefined ? 'Set' : 'Change'}</Button
+								>
+							</Drawer.Trigger>
+							<Drawer.Content>
+								<div class="mx-auto w-full max-w-sm">
+									<Drawer.Header>
+										<Drawer.Title>Threshold Level</Drawer.Title>
+										<Drawer.Description
+											>Set your threshold level. We will notify you once you reached your limit.</Drawer.Description
+										>
+									</Drawer.Header>
+									<div class="p-4 pb-0">
+										<div class="flex items-center justify-center space-x-2">
+											<Button
+												variant="outline"
+												size="icon"
+												class="h-8 w-8 shrink-0 rounded-full"
+												on:click={() => handleClick(-10)}
+												disabled={container.threshold <= 100}
+											>
+												<Minus class="h-4 w-4" />
+												<span class="sr-only">Decrease</span>
+											</Button>
+											<div class="flex-1 text-center">
+												<div class="text-7xl font-bold tracking-tighter">
+													{container.threshold !== undefined
+														? container.threshold
+														: (container.threshold = 350)}
+												</div>
+												<div class="text-[0.70rem] uppercase text-muted-foreground">grams</div>
+											</div>
+											<Button
+												variant="outline"
+												size="icon"
+												class="h-8 w-8 shrink-0 rounded-full"
+												on:click={() => handleClick(10)}
+											>
+												<Plus class="h-4 w-4" />
+												<span class="sr-only">Increase</span>
+											</Button>
+										</div>
+									</div>
+									<Drawer.Footer>
+										<Button>Set Threshold</Button>
+										<Drawer.Close asChild let:builder>
+											<Button builders={[builder]} variant="outline">Cancel</Button>
+										</Drawer.Close>
+									</Drawer.Footer>
+								</div>
+							</Drawer.Content>
+						</Drawer.Root>
+					</div>
+				</Card.Content>
 			</Card.Root>
 
 			{#if $isDesktop}
