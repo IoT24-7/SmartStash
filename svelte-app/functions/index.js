@@ -27,44 +27,64 @@ const firestore = admin.firestore();
 const rtdb = admin.database();
 
 exports.syncFieldToFirestore = functions.database.ref('/containers/{id}')
-    .onWrite((change, context) => {
+    .onWrite(async (change, context) => {
         const containerData = change.after.val();
         const id = context.params.id;
     
-        // Get currentWeight and threshold from container data
-        const currentWeight = containerData.currentWeight;
-        const threshold = containerData.threshold;
-        const origfoodData = containerData.foodData;
-        const origTimestamp = containerData.timestamp;
-        const origUserID = containerData.userID;
-
         if (!containerData) {
             // If the field is deleted or set to null, you might decide to delete the document or update the field accordingly
             return firestore.collection('containers').doc(id).update({
                 currentWeight: admin.firestore.FieldValue.delete()
             });
         //
-        } else if (currentWeight < threshold) {
-            //add a new entry sa users/{id}/notifications/{id}
-            const notificationData = {
-                foodData: origfoodData,
-                id: id,
-                timestamp: origTimestamp,
-                userID: origUserID
-            };
-            firestore.collection('containers').doc(id).set({
-                currentWeight: currentWeight
-            }, { merge: true });
-            return admin.firestore().collection(`users/${origUserID}/notifications`).doc().add(notificationData);
-
-        }
+        } 
         
-        else {
-            // Update the specific field in the Firestore document
-            return firestore.collection('containers').doc(id).set({
-                currentWeight: currentWeight
-            }, { merge: true });
+        try {
+            //Fetch data from firestore
+            const docRef = firestore.collection('containers').doc(id);
+            const doc = await docRef.get();
+
+            if (!doc.exists) {
+                console.log(`Document with ID ${id} not found in Firestore.`);
+                return null;
+            }
+            const firestoreData = doc.data();
+            const { threshold, foodData: origfoodData, timestamp: origTimestamp, userID: origUserID } = firestoreData;
+
+            const currentWeight = containerData.currentWeight;
+            console.log(`${threshold}`)
+            if (currentWeight < threshold) {
+                //add a new entry sa users/{id}/notifications/{id}
+                
+                const notificationData = {
+                    foodData: origfoodData,
+                    id: id,
+                    timestamp: origTimestamp,
+                    userID: origUserID
+                };
+                const notificationPromise = firestore.collection(`users/${origUserID}/notifications`).add(notificationData);
+                const weightUpdatePromise = docRef.set({
+                    currentWeight: currentWeight
+                }, { merge: true });
+                return Promise.all([notificationPromise, weightUpdatePromise])
+                    .then(() => {
+                        console.log(`Notification added and currentWeight updated for container ID: ${id}`);
+                    })
+                    .catch(error => {
+                        console.error("Error adding notification and updating currentWeight: ", error);
+                    });
+    
+            }  else {
+                // Update the specific field in the Firestore document
+                return docRef.set({
+                    currentWeight: currentWeight
+                }, { merge: true });
+            }
+        } catch (error) {
+            console.error('Error fetching Firestore document:', error);
+            throw error;
         }
+
     });
 
 exports.syncfoodNameToRTDB = functions.firestore
