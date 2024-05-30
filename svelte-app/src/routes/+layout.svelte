@@ -8,6 +8,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Toaster } from "$lib/components/ui/sonner";
 	import Home from 'lucide-svelte/icons/home';
 	import Bell from 'lucide-svelte/icons/bell';
 	import PanelLeft from 'lucide-svelte/icons/panel-left';
@@ -18,6 +19,7 @@
 	import Sun from 'lucide-svelte/icons/sun';
 	import Moon from 'lucide-svelte/icons/moon';
 	import { resetMode, setMode } from 'mode-watcher';
+
 	const appName = 'SmartStash';
 	let title = appName;
 	$: {
@@ -44,6 +46,7 @@
 	<title>{title}</title>
 </svelte:head>
 <ModeWatcher {themeColors} />
+<Toaster />
 {#if $page.data.session?.user && $page.route.id !== '/'}
 	<div class="flex min-h-screen w-full flex-col bg-muted/40">
 		<aside class="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">

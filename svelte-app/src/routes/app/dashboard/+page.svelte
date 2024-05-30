@@ -1,18 +1,49 @@
 <script lang="ts">
+	import type { PageData } from './$types.js';
 	import { page } from '$app/stores';
+	import { db } from '$lib/firebase';
+	import { collection, query, where, onSnapshot } from 'firebase/firestore';
+	import type { Containers } from '../../../app';
+	import DashboardForm from './dashboard-form.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Plus } from 'lucide-svelte';
 
+	export let data: PageData;
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
+	let uid = $page.data.session?.user?.id;
 
-	export let data;
-	const containers = data.containers;
+	let containers: Containers[] = [];
+	const setupContainersListener = () => {
+		const containersCollection = collection(db, 'containers');
+		const q = query(containersCollection, where("userId", "array-contains", uid));
+		onSnapshot(
+			q,
+			(snapshot) => {
+				const fetchedContainers: Containers[] = snapshot.docs.map((doc) => {
+					const data = doc.data();
+					return {
+						id: doc.id,
+						currentWeight: data.currentWeight,
+						foodName: data.foodName,
+						status: data.status,
+						threshold: data.threshold,
+						userId: data.userId
+					} as Containers;
+				});
+				containers = [...fetchedContainers];
+				console.log(containers);
+			},
+			(error) => {
+				console.error('Error fetching containers:', error);
+			}
+		);
+	};
+
+	setupContainersListener();
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -25,11 +56,11 @@
 			{#each containers as container (container.id)}
 				<a href="/app/dashboard/{container.id}">
 					<li
-						class="bg-card text-card-foreground mb-2 flex flex-row items-center justify-between rounded-lg border p-6 shadow-md"
+						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
 					>
 						<div>
 							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
-							<p class="sm:text-md text-muted-foreground text-sm">{container.currentWeight} g</p>
+							<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
 						</div>
 					</li>
 				</a>
@@ -39,7 +70,7 @@
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
 				<Dialog.Trigger asChild let:builder>
-					<div class="fixed bottom-7 right-7">
+					<div class="fixed bottom-7 right-7 drop-shadow-xl">
 						<Button builders={[builder]} class="items-center p-7">
 							<Plus class="mr-2 h-5 w-5" />
 							<p class="text-lg font-bold">Add</p>
@@ -48,17 +79,10 @@
 				</Dialog.Trigger>
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
-						<Dialog.Title>Add Ingredient</Dialog.Title>
-						<Dialog.Description>Enter the details of your new ingredient here.</Dialog.Description>
+						<Dialog.Title>Add Container</Dialog.Title>
+						<Dialog.Description>Enter the details of your new SmartStash device here.</Dialog.Description>
 					</Dialog.Header>
-					<form class="grid items-start gap-4">
-						<!-- for setting ingredient name -->
-						<div class="grid gap-2">
-							<Label for="ingredient">Ingredient Name</Label>
-							<Input type="name" id="ingredient_name" />
-						</div>
-						<Button type="submit" variant="secondary">Add</Button>
-					</form>
+					<DashboardForm data={data.form} />
 				</Dialog.Content>
 			</Dialog.Root>
 		{:else}
@@ -73,18 +97,11 @@
 				</Drawer.Trigger>
 				<Drawer.Content>
 					<Drawer.Header class="text-left">
-						<Drawer.Title>Add Ingredient</Drawer.Title>
-						<Drawer.Description>Enter the details of your new ingredient here.</Drawer.Description>
+						<Drawer.Title>Add Container</Drawer.Title>
+						<Drawer.Description>Enter the details of your new SmartStash device here.</Drawer.Description>
+						<DashboardForm data={data.form} />
 					</Drawer.Header>
-					<form class="grid items-start gap-4 px-4">
-						<!-- for setting ingredient name -->
-						<div class="grid gap-2">
-							<Label for="ingredient">Ingredient Name</Label>
-							<Input type="name" id="ingredient_name" />
-						</div>
-						<Button type="submit" variant="secondary">Add</Button>
-					</form>
-					<Drawer.Footer class="pt-2">
+					<Drawer.Footer class="pt-0">
 						<Drawer.Close asChild let:builder>
 							<Button variant="outline" builders={[builder]}>Cancel</Button>
 						</Drawer.Close>

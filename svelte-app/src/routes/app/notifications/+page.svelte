@@ -2,49 +2,21 @@
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
+	import { collection, onSnapshot, deleteDoc, doc, addDoc } from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
 	import { Trash2 } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 
-	let userID: string | undefined = '';
-	$: userID = $page.data.session?.user?.id;
-
-	// dummy data
-	// const notifications = [
-	// 	// id = notification id for creation and deletion
-	// 	// userID
-	// 	// foodItem
-	// 	// TODO: Implement notification in backend
-
-	// 	{
-	// 		id: 1,
-	// 		userID: 1,
-	// 		foodItem: 'Rice'
-	// 	},
-
-	// 	{
-	// 		id: 2,
-	// 		userID: 1,
-	// 		foodItem: 'Cereal'
-	// 	},
-
-	// 	{
-	// 		id: 3,
-	// 		userID: 1,
-	// 		foodItem: 'Garlic'
-	// 	},
-
-	// 	{
-	// 		id: 4,
-	// 		userID: 1,
-	// 		foodItem: 'Onion'
-	// 	}
-	// ];
-
-	// check app.d.ts file for notif type
-	// notifications is an array of notifs
-
+	let userID = $page.data.session?.user?.id;
 	let notifications: Notifs[] = [];
+
+	const generateUniqueID = () => {
+		return Math.random().toString(36).substr(2, 9);
+	};
+
+	const generateTimestamp = () => {
+		return new Date().getTime();
+	};
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
@@ -57,10 +29,10 @@
 						id: doc.id,
 						userID: data.userID,
 						foodItem: data.foodItem,
-						timestamp: data.timestamp.toMillis ? data.timestamp.toMillis() : data.timestamp // convert to milliseconds
+						timestamp: data.timestamp // convert to milliseconds
 					} as Notifs;
 				});
-				notifications = [...fetchedNotifications];
+				notifications = [...fetchedNotifications].sort((a, b) => b.timestamp - a.timestamp);
 				console.log(notifications);
 			},
 			(error) => {
@@ -83,12 +55,34 @@
 		}
 	};
 
-	const formatTimestamp = (timestamp: Date) => {
+	// create dummy notification
+	const createNotification = async () => {
+		if (userID) {
+			try {
+				console.log(generateTimestamp());
+				const notifDoc = await addDoc(collection(db, 'users', userID, 'notifications'), {
+					id: generateUniqueID(),
+					userID: generateUniqueID(),
+					foodItem: 'test',
+					timestamp: new Date().getTime()
+				});
+				console.log('New notification created succesfully');
+			} catch (error) {
+				console.error('Error creating notification:', error);
+			}
+		} else {
+			console.warn('User ID is not defined');
+		}
+	};
+
+	const formatTimestamp = (timestamp: number) => {
 		const date = new Date(timestamp);
 		const now = new Date();
 		const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // difference in seconds
 
-		if (diff < 60) {
+		if (diff < 2) {
+			return 'Just now';
+		} else if (diff < 60) {
 			return `${diff} seconds ago`;
 		} else if (diff < 3600) {
 			return `${Math.floor(diff / 60)} minutes ago`;
@@ -100,23 +94,19 @@
 	};
 
 	// Initialize userID and set up listener once
-	$: {
-		userID = $page.data.session?.user?.id;
-		if (userID) {
-			setupNotificationListener(userID);
-		} else {
-			console.warn('User ID is not defined');
-		}
+	if (userID) {
+		setupNotificationListener(userID);
 	}
 </script>
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
-		<h2 class="scroll-m-20 sm:mt-3 py-4 text-3xl font-extrabold tracking-tight">Notifications</h2>
+		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Notifications</h2>
 		<ul class="flex flex-col gap-2">
 			{#if notifications.length > 0}
 				<!-- reversed so the latest notification at top-->
-				{#each notifications as notification (notification.id)}
+
+				{#each notifications.sort((a, b) => b.timestamp - a.timestamp) as notification (notification.timestamp)}
 					<li
 						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
 					>
@@ -142,5 +132,11 @@
 				<p class="text-muted-foreground">Loading...</p>
 			{/if}
 		</ul>
+		<div class="fixed bottom-7 right-7">
+			<Button class="items-center p-7" on:click={() => createNotification()}>
+				<Plus class="mr-2 h-5 w-5" />
+				<p class="text-lg font-bold">Add</p>
+			</Button>
+		</div>
 	</main>
 </div>

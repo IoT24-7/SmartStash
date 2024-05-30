@@ -1,5 +1,5 @@
 // See https://kit.svelte.dev/docs/types#app
-// import type { Timestamp } from "firebase/firestore";
+
 // for information about these interfaces
 declare global {
 	namespace App {
@@ -15,7 +15,16 @@ export interface Notifs {
 	id: string;
 	userID: string;
 	foodItem: string;
-	timestamp: Date;
+	timestamp: number;
+}
+
+export interface Containers {
+	id: string;
+	currentWeight: number;
+	foodName: string;
+	status: boolean;
+	threshold: number;
+	userId: [];	
 }
 
 export {};
