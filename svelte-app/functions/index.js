@@ -55,9 +55,10 @@ exports.syncFieldToFirestore = functions.database
 			const userId = firestoreData.userId;
 			const currentTimestamp = Date.now();
 			const notificationID = firestore.collection('dummyCollection').doc().id;
+            const arrayUsersNotified = firestore.notifiedUsers;
 
 			const currentWeight = containerData.currentWeight;
-			if (currentWeight < threshold) {
+			if (currentWeight < threshold && arrayUsersNotified.includes(userId)) {
 				// Iterate over userIDs array to create notifications for each user
 				const notificationPromises = userId.map((user) => {
 					// Generate a random ID for the notification document
@@ -66,7 +67,6 @@ exports.syncFieldToFirestore = functions.database
 						foodItem: foodName,
 						timestamp: currentTimestamp,
 						id: notificationID,
-						send: 1 // Assign the generated ID to the notification data
 					};
 					// Add notification for each user
 					return firestore
