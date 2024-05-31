@@ -153,9 +153,10 @@
 												<Minus class="h-4 w-4" />
 												<span class="sr-only">Decrease</span>
 											</Button>
+											
 											<div class="flex-1 text-center">
 												<div class="text-7xl font-bold tracking-tighter">
-													{container.goal}
+													<input type="number" class = "bg-transparent text-center w-3/4 [&::-webkit-inner-spin-button]:appearance-none" bind:value = {container.goal}>
 												</div>
 												<div class="text-[0.70rem] uppercase text-muted-foreground">grams</div>
 											</div>
