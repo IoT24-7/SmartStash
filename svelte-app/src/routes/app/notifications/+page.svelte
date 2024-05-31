@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageData } from './$types.js';
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
@@ -15,9 +16,11 @@
 	import { Plus } from 'lucide-svelte';
 	import { onMount, onDestroy } from 'svelte';
 
+	export let data: PageData;
 	let userID = $page.data.session?.user?.id;
 	let unsubscribe: Unsubscribe;
-	let notifications: Notifs[] = [];
+	let notifications = data.initialNotifications;
+	console.log('Initial Notifications:', notifications);
 
 	const generateUniqueID = () => {
 		return Math.random().toString(36).substr(2, 9);
@@ -143,10 +146,24 @@
 						</Button>
 					</li>
 				{/each}
-			{:else if notifications.length === 0}
-				<p>Nice work! You're all caught up.</p>
 			{:else}
-				<p class="text-muted-foreground">Loading...</p>
+				<div
+					class="relative flex h-full w-full flex-col items-center justify-center gap-2 py-16 text-center"
+				>
+					<img
+						src="/undraw_happy_news_re_tsbd.svg"
+						alt="Happy news"
+						class="sm:max-h-xs max-h-[280px] max-w-[280px] p-6 sm:max-w-xs"
+					/>
+					<h3 class="scroll-m-20 text-lg font-bold tracking-tight sm:text-2xl">
+						You have no notifications.
+					</h3>
+					<h4
+						class="scroll-m-20 text-sm font-medium tracking-tight text-muted-foreground sm:text-xl"
+					>
+						You're all caught up!
+					</h4>
+				</div>
 			{/if}
 		</ul>
 		<div class="fixed bottom-7 right-7">

@@ -23,7 +23,8 @@
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
-	let container: Containers[] = [];
+	let container = data.initialContainer;
+	console.log('Initial Container:', container);
 	let unsubscribe: Unsubscribe;
 	const setupContainerListener = () => {
 		const containerDoc = doc(db, 'containers', containerData);

@@ -17,7 +17,8 @@
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	let uid = $page.data.session?.user?.id;
 
-	let containers: Containers[] = [];
+	let containers: Containers[] = data.initialContainers;
+	console.log('Initial Dashboard:', containers);
 	let unsubscribe: Unsubscribe;
 
 	const setupContainersListener = () => {
@@ -59,20 +60,34 @@
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Dashboard</h2>
 
-		<ul class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
-			{#each containers as container (container.id)}
-				<a href="/app/dashboard/{container.id}">
-					<li
-						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
-					>
-						<div>
-							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
-							<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
-						</div>
-					</li>
-				</a>
-			{/each}
-		</ul>
+		{#if containers.length === 0}
+			<div
+				class="relative flex h-full w-full flex-col items-center justify-center gap-2 py-16 text-center"
+			>
+				<img src="/undraw_people_search_re_5rre.svg" alt="Searching" class="sm:max-w-xs sm:max-h-xs max-w-[280px] max-h-[280px] p-6" />
+				<h3 class="scroll-m-20 sm:text-2xl text-lg font-bold tracking-tight">No devices connected yet.</h3>
+				<h4 class="scroll-m-20 sm:text-xl text-sm font-medium tracking-tight text-muted-foreground">
+					Connect a SmartStash device to get started.
+				</h4>
+			</div>
+		{:else}
+			<ul class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
+				{#each containers as container (container.id)}
+					<a href="/app/dashboard/{container.id}">
+						<li
+							class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
+						>
+							<div>
+								<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
+								<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
+							</div>
+						</li>
+					</a>
+				{/each}
+			</ul>
+		{/if}
+
+		<!-- Rest of your code -->
 
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
