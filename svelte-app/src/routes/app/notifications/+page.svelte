@@ -1,14 +1,26 @@
 <script lang="ts">
+	import type { PageData } from './$types.js';
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, onSnapshot, deleteDoc, doc, addDoc } from 'firebase/firestore';
+	import {
+		collection,
+		onSnapshot,
+		deleteDoc,
+		doc,
+		addDoc,
+		type Unsubscribe
+	} from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
 	import { Trash2 } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
+	import { onMount, onDestroy } from 'svelte';
 
+	export let data: PageData;
 	let userID = $page.data.session?.user?.id;
-	let notifications: Notifs[] = [];
+	let unsubscribe: Unsubscribe;
+	let notifications = data.initialNotifications;
+	console.log('Initial Notifications:', notifications);
 
 	const generateUniqueID = () => {
 		return Math.random().toString(36).substr(2, 9);
@@ -20,7 +32,7 @@
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
-		onSnapshot(
+		unsubscribe = onSnapshot(
 			notifsCollection,
 			(snapshot) => {
 				const fetchedNotifications: Notifs[] = snapshot.docs.map((doc) => {
@@ -33,7 +45,7 @@
 					} as Notifs;
 				});
 				notifications = [...fetchedNotifications].sort((a, b) => b.timestamp - a.timestamp);
-				console.log(notifications);
+				console.log('Notifications:', notifications);
 			},
 			(error) => {
 				console.error('Error fetching notifications:', error);
@@ -66,7 +78,7 @@
 					foodItem: 'test',
 					timestamp: new Date().getTime()
 				});
-				console.log('New notification created succesfully');
+				console.log('New notification created successfully');
 			} catch (error) {
 				console.error('Error creating notification:', error);
 			}
@@ -94,9 +106,17 @@
 	};
 
 	// Initialize userID and set up listener once
-	if (userID) {
-		setupNotificationListener(userID);
-	}
+	onMount(() => {
+		if (userID) {
+			setupNotificationListener(userID);
+		}
+	});
+
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 </script>
 
 <div class="relative flex h-full w-full flex-col">
@@ -126,10 +146,24 @@
 						</Button>
 					</li>
 				{/each}
-			{:else if notifications.length === 0}
-				<p>Nice work! You're all caught up.</p>
 			{:else}
-				<p class="text-muted-foreground">Loading...</p>
+				<div
+					class="relative flex h-full w-full flex-col items-center justify-center gap-2 py-16 text-center"
+				>
+					<img
+						src="/undraw_happy_news_re_tsbd.svg"
+						alt="Happy news"
+						class="sm:max-h-xs max-h-[280px] max-w-[280px] p-6 sm:max-w-xs"
+					/>
+					<h3 class="scroll-m-20 text-lg font-bold tracking-tight sm:text-2xl">
+						You have no notifications.
+					</h3>
+					<h4
+						class="scroll-m-20 text-sm font-medium tracking-tight text-muted-foreground sm:text-xl"
+					>
+						You're all caught up!
+					</h4>
+				</div>
 			{/if}
 		</ul>
 		<div class="fixed bottom-7 right-7">

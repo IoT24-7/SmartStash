@@ -25,6 +25,7 @@ export interface Containers {
 	status: boolean;
 	threshold: number;
 	userId: [];	
+	checked: boolean;
 }
 
 export {};
