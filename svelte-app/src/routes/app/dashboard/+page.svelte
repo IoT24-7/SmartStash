@@ -2,7 +2,7 @@
 	import type { PageData } from './$types.js';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, query, where, onSnapshot } from 'firebase/firestore';
+	import { collection, query, where, onSnapshot, type Unsubscribe } from 'firebase/firestore';
 	import type { Containers } from '../../../app';
 	import DashboardForm from './dashboard-form.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -10,6 +10,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Plus } from 'lucide-svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	export let data: PageData;
 	let open = false;
@@ -17,10 +18,13 @@
 	let uid = $page.data.session?.user?.id;
 
 	let containers: Containers[] = [];
+	let unsubscribe: Unsubscribe;
+
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
-		const q = query(containersCollection, where("userId", "array-contains", uid));
-		onSnapshot(
+		const q = query(containersCollection, where('userId', 'array-contains', uid));
+		unsubscribe = onSnapshot(
+			// Assign the unsubscribe function to a variable
 			q,
 			(snapshot) => {
 				const fetchedContainers: Containers[] = snapshot.docs.map((doc) => {
@@ -28,11 +32,11 @@
 					return {
 						id: doc.id,
 						currentWeight: data.currentWeight,
-						foodName: data.foodName,
+						foodName: data.foodName
 					} as Containers;
 				});
 				containers = [...fetchedContainers];
-				console.log('Dashboard:', containers)
+				console.log('Dashboard:', containers);
 			},
 			(error) => {
 				console.error('Error fetching containers:', error);
@@ -40,14 +44,20 @@
 		);
 	};
 
-	setupContainersListener();
+	onMount(() => {
+		setupContainersListener();
+	});
+
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 </script>
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Dashboard</h2>
-		<p>Welcome, {$page.data.session?.user?.name}!</p>
-		<p class="mb-3">Your ID is {$page.data.session?.user?.id}.</p>
 
 		<ul class="grid grid-cols-4 gap-4 max-lg:grid-cols-2 max-lg:gap-2">
 			{#each containers as container (container.id)}
@@ -77,7 +87,9 @@
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
 						<Dialog.Title>Add Container</Dialog.Title>
-						<Dialog.Description>Enter the details of your new SmartStash device here.</Dialog.Description>
+						<Dialog.Description
+							>Enter the details of your new SmartStash device here.</Dialog.Description
+						>
 					</Dialog.Header>
 					<DashboardForm data={data.form} />
 				</Dialog.Content>
@@ -95,7 +107,9 @@
 				<Drawer.Content>
 					<Drawer.Header class="text-left">
 						<Drawer.Title>Add Container</Drawer.Title>
-						<Drawer.Description>Enter the details of your new SmartStash device here.</Drawer.Description>
+						<Drawer.Description
+							>Enter the details of your new SmartStash device here.</Drawer.Description
+						>
 						<DashboardForm data={data.form} />
 					</Drawer.Header>
 					<Drawer.Footer class="pt-0">

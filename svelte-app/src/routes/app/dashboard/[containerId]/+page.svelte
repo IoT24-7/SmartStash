@@ -17,15 +17,17 @@
 	import { Label } from '$lib/components/ui/label/index.ts';
 	import { Input } from '$lib/components/ui/input/index.ts';
 	import { db } from '$lib/firebase';
-	import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
+	import { doc, onSnapshot, updateDoc, arrayRemove, type Unsubscribe } from 'firebase/firestore';
+	import { onDestroy, onMount } from 'svelte';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
 	let container: Containers[] = [];
+	let unsubscribe: Unsubscribe;
 	const setupContainerListener = () => {
 		const containerDoc = doc(db, 'containers', containerData);
-		onSnapshot(containerDoc, (docSnapshot) => {
+		unsubscribe = onSnapshot(containerDoc, (docSnapshot) => {
 			if (docSnapshot.exists()) {
 				const data = docSnapshot.data();
 				const fetchedContainer: Containers = {
@@ -41,7 +43,14 @@
 			console.log(container.id, ':', container);
 		});
 	};
-	setupContainerListener();
+	onMount(() => {
+		setupContainerListener();
+	});
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 
 	const removeContainer = async (container) => {
 		await updateDoc(doc(db, 'containers', container.id), {

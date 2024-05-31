@@ -1,19 +1,28 @@
 <script lang="ts">
 	import type { Containers } from '../../../app';
-	import { onDestroy } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+	import {
+		collection,
+		query,
+		where,
+		onSnapshot,
+		updateDoc,
+		doc,
+		type Unsubscribe
+	} from 'firebase/firestore';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 
 	let uid = $page.data.session?.user?.id;
 
 	let containers: Containers[] = [];
+	let unsubscribe: Unsubscribe;
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
 		const q = query(containersCollection, where('userId', 'array-contains', uid));
-		onSnapshot(
+		unsubscribe = onSnapshot(
 			q,
 			(snapshot) => {
 				const fetchedContainers: Containers[] = snapshot.docs.map((doc) => {
@@ -38,6 +47,15 @@
 		);
 	};
 
+	onMount(() => {
+		setupContainersListener();
+	});
+
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 	const updateChecked = async (container: Containers) => {
 		await updateDoc(doc(db, 'containers', container.id), {
 			checked: container.checked
@@ -48,31 +66,30 @@
 			await updateChecked(container);
 		}
 	});
-	setupContainersListener();
 </script>
 
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Shopping List</h2>
+		<div class="flex flex-col gap-2 px-5">
+			{#each containers as container}
+				<li class="relative flex flex-row items-center justify-between">
+					<div class="flex items-center space-x-2">
+						<Label
+							id="terms-label"
+							for="terms"
+							class="my-3 flex flex-row items-center gap-4 text-2xl font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						>
+							<Checkbox bind:checked={container.checked} />
+							{#if container.checked}
+								<p class="font-semibold text-primary line-through">{container.foodName}</p>
+							{:else}
+								<p class="font-semibold">{container.foodName}</p>
+							{/if}
+						</Label>
+					</div>
+				</li>
+			{/each}
+		</div>
 	</main>
-	<div class="flex flex-col gap-2 px-5">
-		{#each containers as container}
-			<li class="relative flex flex-row items-center justify-between">
-				<div class="flex items-center space-x-2">
-					<Label
-						id="terms-label"
-						for="terms"
-						class="my-3 flex flex-row items-center gap-4 text-2xl font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-					>
-						<Checkbox bind:checked={container.checked} />
-						{#if container.checked}
-							<p class="text-primary line-through">{container.foodName}</p>
-						{:else}
-							<p>{container.foodName}</p>
-						{/if}
-					</Label>
-				</div>
-			</li>
-		{/each}
-	</div>
 </div>

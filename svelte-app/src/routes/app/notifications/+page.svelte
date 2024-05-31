@@ -2,12 +2,21 @@
 	import { Button } from '$lib/components/ui/button';
 	import { page } from '$app/stores';
 	import { db } from '$lib/firebase';
-	import { collection, onSnapshot, deleteDoc, doc, addDoc } from 'firebase/firestore';
+	import {
+		collection,
+		onSnapshot,
+		deleteDoc,
+		doc,
+		addDoc,
+		type Unsubscribe
+	} from 'firebase/firestore';
 	import type { Notifs } from '../../../app';
 	import { Trash2 } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	let userID = $page.data.session?.user?.id;
+	let unsubscribe: Unsubscribe;
 	let notifications: Notifs[] = [];
 
 	const generateUniqueID = () => {
@@ -20,7 +29,7 @@
 
 	const setupNotificationListener = (uid: string) => {
 		const notifsCollection = collection(db, 'users', uid, 'notifications');
-		onSnapshot(
+		unsubscribe = onSnapshot(
 			notifsCollection,
 			(snapshot) => {
 				const fetchedNotifications: Notifs[] = snapshot.docs.map((doc) => {
@@ -66,7 +75,7 @@
 					foodItem: 'test',
 					timestamp: new Date().getTime()
 				});
-				console.log('New notification created succesfully');
+				console.log('New notification created successfully');
 			} catch (error) {
 				console.error('Error creating notification:', error);
 			}
@@ -94,9 +103,17 @@
 	};
 
 	// Initialize userID and set up listener once
-	if (userID) {
-		setupNotificationListener(userID);
-	}
+	onMount(() => {
+		if (userID) {
+			setupNotificationListener(userID);
+		}
+	});
+
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 </script>
 
 <div class="relative flex h-full w-full flex-col">
