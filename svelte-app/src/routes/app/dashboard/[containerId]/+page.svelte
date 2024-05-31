@@ -11,6 +11,7 @@
 	import { SquarePen } from 'lucide-svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import { Minus } from 'lucide-svelte';
+	import { Menu } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import { CircleMinus } from 'lucide-svelte';
 	import { Unlink } from 'lucide-svelte';
@@ -38,7 +39,11 @@
 					status: data.status,
 					threshold: data.threshold,
 					userId: data.userId,
-					goal: data.threshold !== undefined ? data.threshold : 350
+					goal: data.threshold !== undefined ? data.threshold : 350,
+					pricePesos: data.pricePesos,
+					carbohydrates: data.carbohydrates,
+					proteins: data.proteins,
+					fats: data.fats
 				};
 				container = fetchedContainer;
 			}
@@ -54,10 +59,19 @@
 	};
 
 	let newFoodName = '';
+	let newPricePesos = '';
+	let newCarbohydrates = '';
+	let newProteins = '';
+	let newFats = '';
 	const updateName = async (container) => {
 		await updateDoc(doc(db, 'containers', container.id), {
-			foodName: newFoodName
+			foodName: newFoodName !== '' ? newFoodName : container.foodName,
+			pricePesos: newPricePesos !== '' ? newPricePesos : container.pricePesos,
+			carbohydrates: newCarbohydrates !== '' ? newCarbohydrates : container.carbohydrates,
+			proteins: newProteins !== '' ? newProteins : container.proteins,
+			fats: newFats !== '' ? newFats : container.fats
 		});
+		console.log(newPricePesos);
 	};
 	const updateThreshold = async (container) => {
 		await updateDoc(doc(db, 'containers', container.id), {
@@ -180,6 +194,42 @@
 			</Card.Root>
 
 			{#if $isDesktop}
+				<Dialog.Root>
+				<!-- edit ingredient -->
+				<Dialog.Trigger>
+					<Button variant="outline" class="w-full">
+						<Menu class="mx-2 h-4 w-4" /> Additional Information
+					</Button>
+				</Dialog.Trigger>
+				<Dialog.Content class="max-w-xs rounded-lg sm:max-w-[425px]">
+					<Dialog.Header>
+						<Dialog.Title>Additional Information</Dialog.Title>
+						<Dialog.Description>
+							See additional information (nutritional info and price) about your ingredient here.
+						</Dialog.Description>
+					</Dialog.Header>
+					<div class="grid gap-4 py-4">
+						<div class="flex items-center gap-4">
+							<p><Label for="name" class="flex-shrink-0 text-right">Ingredient Name: {container.foodName} </Label> </p>
+						</div>
+						<div class="flex items-center gap-4">
+							<p><Label for="name" class="flex-shrink-0 text-right">Price (per serving): {(container.pricePesos === '' || container.pricePesos === undefined) ? 'No information available': `Php ${container.pricePesos}`} </Label> </p>
+						</div>
+						<div class="flex items-center gap-4">
+							<p><Label for="name" class="flex-shrink-0 text-right">Carbohydrates (per serving): {(container.carbohydrates === '' || container.carbohydrates === undefined) ? 'No information available': `${container.carbohydrates} g`} </Label> </p>
+						</div>
+						<div class="flex items-center gap-4">
+							<p><Label for="name" class="flex-shrink-0 text-right">Proteins (per serving): {(container.proteins === '' || container.proteins === undefined)  ? 'No information available': `${container.proteins} g`} </Label> </p>
+						</div>
+						<div class="flex items-center gap-4">
+							<p><Label for="name" class="flex-shrink-0 text-right">Fats (per serving): {(container.fats === '' || container.fats === undefined) ? 'No information available': `${container.fats} g`} </Label> </p>
+						</div>
+					</div>
+					<!-- Save Button: should update database when clicked -->
+					<Dialog.Footer>
+					</Dialog.Footer>
+				</Dialog.Content>
+				</Dialog.Root>
 				<Dialog.Root bind:open>
 					<!-- edit ingredient -->
 					<Dialog.Trigger>
@@ -203,6 +253,46 @@
 									placeholder={container.foodName}
 									class="flex-grow"
 									bind:value={newFoodName}
+								/>
+							</div>
+							<div class="flex items-center gap-4">
+								<Label for="name" class="flex-shrink-0 text-right">Price (per serving)</Label>
+								<Input
+									id="current_input_price"
+									type="float"
+									placeholder={container.pricePesos}
+									class="flex-grow"
+									bind:value={newPricePesos}
+								/>
+							</div>
+							<div class="flex items-center gap-4">
+								<Label for="name" class="flex-shrink-0 text-right">Carbohydrates (per serving)</Label>
+								<Input
+									id="current_input_carbs"
+									type="float"
+									placeholder={container.carbohydrates}
+									class="flex-grow"
+									bind:value={newCarbohydrates}
+								/>
+							</div>
+							<div class="flex items-center gap-4">
+								<Label for="name" class="flex-shrink-0 text-right">Proteins (per serving)</Label>
+								<Input
+									id="current_input_proteins"
+									type="float"
+									placeholder={container.proteins}
+									class="flex-grow"
+									bind:value={newProteins}
+								/>
+							</div>
+							<div class="flex items-center gap-4">
+								<Label for="name" class="flex-shrink-0 text-right">Fats (per serving)</Label>
+								<Input
+									id="current_input_fats"
+									type="float"
+									placeholder={container.fats}
+									class="flex-grow"
+									bind:value={newFats}
 								/>
 							</div>
 						</div>

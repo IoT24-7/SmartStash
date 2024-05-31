@@ -31,7 +31,11 @@
 						foodName: data.foodName,
 						status: data.status,
 						threshold: data.threshold,
-						userId: data.userId
+						userId: data.userId,
+						pricePesos: data.pricePesos,
+						carbohydrates: data.carbohydrates,
+						proteins: data.proteins,
+						fats: data.fats
 					} as Containers;
 				});
 				containers = [...fetchedContainers];
@@ -80,7 +84,7 @@
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
 						<Dialog.Title>Add Container</Dialog.Title>
-						<Dialog.Description>Enter the details of your new SmartStash device here.</Dialog.Description>
+						<Dialog.Description>Enter the details of your new SmartStash device here. Fields marked with an asterisk (*) are required.</Dialog.Description>
 					</Dialog.Header>
 					<DashboardForm data={data.form} />
 				</Dialog.Content>
@@ -98,7 +102,7 @@
 				<Drawer.Content>
 					<Drawer.Header class="text-left">
 						<Drawer.Title>Add Container</Drawer.Title>
-						<Drawer.Description>Enter the details of your new SmartStash device here.</Drawer.Description>
+						<Drawer.Description>Enter the details of your new SmartStash device here. Fields marked with an asterisk (*) are required. </Drawer.Description>
 						<DashboardForm data={data.form} />
 					</Drawer.Header>
 					<Drawer.Footer class="pt-0">

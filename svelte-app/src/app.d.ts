@@ -25,6 +25,10 @@ export interface Containers {
 	status: boolean;
 	threshold: number;
 	userId: [];	
+	pricePesos: string;
+	carbohydrates: string;
+	proteins: string;
+	fats: string
 }
 
 export {};
