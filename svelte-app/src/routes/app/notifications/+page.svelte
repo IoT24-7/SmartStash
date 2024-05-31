@@ -33,7 +33,7 @@
 					} as Notifs;
 				});
 				notifications = [...fetchedNotifications].sort((a, b) => b.timestamp - a.timestamp);
-				console.log(notifications);
+				console.log('Notifications:', notifications);
 			},
 			(error) => {
 				console.error('Error fetching notifications:', error);

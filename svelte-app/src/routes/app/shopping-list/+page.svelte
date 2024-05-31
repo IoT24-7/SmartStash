@@ -1,36 +1,15 @@
 <script lang="ts">
+	import type { Containers } from '../../../app';
+	import { onDestroy } from 'svelte';
 	import { page } from '$app/stores';
+	import { db } from '$lib/firebase';
+	import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import type { Containers } from '../../../app';
-	import { db } from '$lib/firebase';
-	import { collection, query, where, onSnapshot } from 'firebase/firestore';
 
-	// dummy data
-	let shopping_list = [
-		{
-			id: 'asd',
-			currentWeight: '100 g',
-			foodName: 'Sugar',
-			status: 'Connected',
-			threshold: '50 g',
-			userId: 'newuser',
-			checked: false
-		},
-		{
-			id: 'asd',
-			currentWeight: '100 g',
-			foodName: 'Salt',
-			status: 'Connected',
-			threshold: '50 g',
-			userId: 'newuser',
-			checked: false
-		}
-	];
 	let uid = $page.data.session?.user?.id;
 
 	let containers: Containers[] = [];
-	let containersWithChecked: Containers[] = [];
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
 		const q = query(containersCollection, where('userId', 'array-contains', uid));
@@ -44,21 +23,14 @@
 						id: doc.id,
 						currentWeight: data.currentWeight,
 						foodName: data.foodName,
-						status: data.status,
 						threshold: data.threshold,
-						userId: data.userId
+						checked: data.checked
 					} as Containers;
 				});
-				containers = [...fetchedContainers];
-				console.log(containers);
-				containersWithChecked = containers.map((container) => ({
-					...container,
-					checked: false
-				}));
-				containersWithChecked = containersWithChecked.filter(
+				containers = [...fetchedContainers].filter(
 					(container) => container.currentWeight <= container.threshold
 				);
-				console.log('containersWithChecked:', containersWithChecked);
+				console.log('Shopping List:', containers);
 			},
 			(error) => {
 				console.error('Error fetching containers:', error);
@@ -66,6 +38,16 @@
 		);
 	};
 
+	const updateChecked = async (container: Containers) => {
+		await updateDoc(doc(db, 'containers', container.id), {
+			checked: container.checked
+		});
+	};
+	onDestroy(async () => {
+		for (const container of containers) {
+			await updateChecked(container);
+		}
+	});
 	setupContainersListener();
 </script>
 
@@ -74,7 +56,7 @@
 		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Shopping List</h2>
 	</main>
 	<div class="flex flex-col gap-2 px-5">
-		{#each containersWithChecked as container}
+		{#each containers as container}
 			<li class="relative flex flex-row items-center justify-between">
 				<div class="flex items-center space-x-2">
 					<Label

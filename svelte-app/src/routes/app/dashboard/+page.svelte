@@ -29,13 +29,10 @@
 						id: doc.id,
 						currentWeight: data.currentWeight,
 						foodName: data.foodName,
-						status: data.status,
-						threshold: data.threshold,
-						userId: data.userId
 					} as Containers;
 				});
 				containers = [...fetchedContainers];
-				console.log(containers);
+				console.log('Dashboard:', containers)
 			},
 			(error) => {
 				console.error('Error fetching containers:', error);

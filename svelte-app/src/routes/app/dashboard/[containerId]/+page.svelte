@@ -9,11 +9,9 @@
 	import { Wifi } from 'lucide-svelte';
 	import { WifiOff } from 'lucide-svelte';
 	import { SquarePen } from 'lucide-svelte';
-	import { Trash2 } from 'lucide-svelte';
 	import { Minus } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import { CircleMinus } from 'lucide-svelte';
-	import { Unlink } from 'lucide-svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.ts';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Label } from '$lib/components/ui/label/index.ts';
@@ -24,7 +22,6 @@
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
-	// console.log(containerData);
 	let container: Containers[] = [];
 	const setupContainerListener = () => {
 		const containerDoc = doc(db, 'containers', containerData);
@@ -37,12 +34,11 @@
 					foodName: data.foodName,
 					status: data.status,
 					threshold: data.threshold,
-					userId: data.userId,
 					goal: data.threshold !== undefined ? data.threshold : 350
 				};
 				container = fetchedContainer;
 			}
-			console.log(container);
+			console.log(container.id, ':', container);
 		});
 	};
 	setupContainerListener();
