@@ -6,7 +6,7 @@ import { formSchema } from './schema';
 import { db } from '$lib/firebase';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
-export const load: PageServerLoad = async ( event ) => {
+export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(formSchema))
 	};

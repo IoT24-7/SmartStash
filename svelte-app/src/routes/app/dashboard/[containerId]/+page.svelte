@@ -85,7 +85,7 @@
 			{container.foodName}
 		</h2>
 		<div class="flex h-full w-full flex-col gap-4 p-4 sm:max-w-[480px]">
-			<Card.Root class="w-full">
+			<!-- <Card.Root class="w-full">
 				<Card.Header class="pb-2">
 					<Card.Title class="text-lg font-medium tracking-tight text-accent-foreground"
 						>Status</Card.Title
@@ -100,7 +100,7 @@
 						<WifiOff class=" h-6 w-6" />
 					{/if}
 				</Card.Content>
-			</Card.Root>
+			</Card.Root> -->
 			<Card.Root class="w-full">
 				<Card.Header class="pb-2">
 					<Card.Title class="text-lg font-medium tracking-tight text-accent-foreground"
