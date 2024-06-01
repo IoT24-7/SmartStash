@@ -24,10 +24,6 @@ export const actions: Actions = {
 
 		const name = form.data.foodName;
 		const macAddress = form.data.macAddress;
-		const pricePesos = form.data.pricePesos;
-		const carbohydrates = form.data.carbohydrates;
-		const proteins = form.data.proteins;
-		const fats = form.data.fats;
 		const uid = session?.user?.id;
 		const docRef = doc(db, 'containers', macAddress);
 
@@ -35,10 +31,6 @@ export const actions: Actions = {
 			await updateDoc(docRef, {
 				foodName: name,
 				userId: arrayUnion(uid),
-				pricePesos: pricePesos,
-				carbohydrates: carbohydrates,
-				proteins: proteins,
-				fats: fats
 			});
 		} catch (err) {
 			return fail(500, {

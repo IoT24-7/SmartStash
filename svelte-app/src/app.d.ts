@@ -24,11 +24,11 @@ export interface Containers {
 	foodName: string;
 	status: boolean;
 	threshold: number;
-	userId: [];	
-	pricePesos: string;
-	carbohydrates: string;
-	proteins: string;
-	fats: string
+	userId: [];
+	pricePesos: number;
+	carbohydrates: number;
+	proteins: number;
+	fats: number;
 }
 
 export {};
