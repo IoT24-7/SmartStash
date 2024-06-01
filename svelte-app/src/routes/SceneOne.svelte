@@ -2,7 +2,7 @@
 	import { T } from '@threlte/core';
 	import * as THREE from 'three';
 	import { OrbitControls, Environment, Sky } from '@threlte/extras';
-	import Device1 from '../../lib/models/device1.svelte';
+	import Device1 from '../lib/models/device1.svelte';
 </script>
 
 <T.PerspectiveCamera makeDefault position={[10, 10, 10]} fov={80} near={0.1} far={1000}>
