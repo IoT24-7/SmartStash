@@ -19,7 +19,7 @@
 	let containers: Containers[] = [];
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
-		const q = query(containersCollection, where("userId", "array-contains", uid));
+		const q = query(containersCollection, where('userId', 'array-contains', uid));
 		onSnapshot(
 			q,
 			(snapshot) => {
@@ -60,11 +60,11 @@
 			{#each containers as container (container.id)}
 				<a href="/app/dashboard/{container.id}">
 					<li
-						class="mb-2 flex flex-row items-center justify-between rounded-lg border bg-card p-6 text-card-foreground shadow-md"
+						class="bg-card text-card-foreground mb-2 flex flex-row items-center justify-between rounded-lg border p-6 shadow-md"
 					>
 						<div>
 							<p class="text-lg font-bold tracking-tight sm:text-xl">{container.foodName}</p>
-							<p class="sm:text-md text-sm text-muted-foreground">{container.currentWeight} g</p>
+							<p class="sm:text-md text-muted-foreground text-sm">{container.currentWeight} g</p>
 						</div>
 					</li>
 				</a>
@@ -84,7 +84,9 @@
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
 						<Dialog.Title>Add Container</Dialog.Title>
-						<Dialog.Description>Enter the details of your new SmartStash device here. Fields marked with an asterisk (*) are required.</Dialog.Description>
+						<Dialog.Description
+							>Enter the details of your new SmartStash device here.</Dialog.Description
+						>
 					</Dialog.Header>
 					<DashboardForm data={data.form} />
 				</Dialog.Content>
@@ -102,7 +104,10 @@
 				<Drawer.Content>
 					<Drawer.Header class="text-left">
 						<Drawer.Title>Add Container</Drawer.Title>
-						<Drawer.Description>Enter the details of your new SmartStash device here. Fields marked with an asterisk (*) are required. </Drawer.Description>
+						<Drawer.Description
+							>Enter the details of your new SmartStash device here. Fields marked with an asterisk
+							(*) are required.
+						</Drawer.Description>
 						<DashboardForm data={data.form} />
 					</Drawer.Header>
 					<Drawer.Footer class="pt-0">
