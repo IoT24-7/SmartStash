@@ -35,7 +35,11 @@ exports.syncFieldToFirestore = functions.database
 		if (!containerData) {
 			// If the field is deleted or set to null, you might decide to delete the document or update the field accordingly
 			return firestore.collection('containers').doc(id).update({
-				currentWeight: admin.firestore.FieldValue.delete()
+				currentWeight: admin.firestore.FieldValue.delete(),
+				pricePesos: admin.firestore.FieldValue.delete(),
+				carbohydrates: admin.firestore.FieldValue.delete(),
+				proteins: admin.firestore.FieldValue.delete(),
+				fats: admin.firestore.FieldValue.delete()
 			});
 			//
 		}
@@ -55,6 +59,10 @@ exports.syncFieldToFirestore = functions.database
 			const userId = firestoreData.userId;
 			const currentTimestamp = Date.now();
 			const notificationID = firestore.collection('dummyCollection').doc().id;
+			const pricePesos = firestoreData.pricePesos;
+			const carbohydrates = firestoreData.carbohydrates;
+			const proteins = firestoreData.proteins;
+			const fats = firestoreData.fats;
 
 			const currentWeight = containerData.currentWeight;
 			if (currentWeight < threshold) {
@@ -118,17 +126,30 @@ exports.syncfoodNameToRTDB = functions.firestore
 				// Document was created
 				if (newValue.foodName) {
 					await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+					/* await rtdb.ref(`/containers/${docId}`).update({ pricePesos: newValue.pricePesos }); */
+					await rtdb.ref(`/containers/${docId}`).update({ pricePesos: newValue.pricePesos });
+					await rtdb.ref(`/containers/${docId}`).update({ carbohydrates: newValue.carbohydrates });
+					await rtdb.ref(`/containers/${docId}`).update({ proteins: newValue.proteins });
+					await rtdb.ref(`/containers/${docId}`).update({ fats: newValue.fats });
 					console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
 				}
 			} else if (previousValue && newValue) {
 				// Document was updated
 				if (newValue.foodName !== previousValue.foodName) {
 					await rtdb.ref(`/containers/${docId}`).update({ foodName: newValue.foodName });
+					await rtdb.ref(`/containers/${docId}`).update({ pricePesos: newValue.pricePesos });
+					await rtdb.ref(`/containers/${docId}`).update({ carbohydrates: newValue.carbohydrates });
+					await rtdb.ref(`/containers/${docId}`).update({ proteins: newValue.proteins });
+					await rtdb.ref(`/containers/${docId}`).update({ fats: newValue.fats });
 					console.log(`RTDB updated with foodName: ${newValue.foodName} for ID: ${docId}`);
 				}
 			} else if (!newValue && previousValue) {
 				// Document was deleted
 				await rtdb.ref(`/containers/${docId}/foodName`).remove();
+				await rtdb.ref(`/containers/${docId}/pricePesos`).remove();
+				await rtdb.ref(`/containers/${docId}/carbohydrates`).remove();
+				await rtdb.ref(`/containers/${docId}/proteins`).remove();
+				await rtdb.ref(`/containers/${docId}/fats`).remove();
 				console.log(`foodName field removed from RTDB for ID: ${docId}`);
 			}
 		} catch (error) {

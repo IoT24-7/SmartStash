@@ -53,5 +53,5 @@
 			{/each}
 		</Form.FieldErrors>
 	</Form.Field>
-	<Form.Button><Link class="mr-2 h-4 w-4"/>Connect</Form.Button>
+	<Form.Button><Link class="mr-2 h-4 w-4" />Connect</Form.Button>
 </form>

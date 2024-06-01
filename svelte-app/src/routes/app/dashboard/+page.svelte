@@ -24,6 +24,7 @@
 	const setupContainersListener = () => {
 		const containersCollection = collection(db, 'containers');
 		const q = query(containersCollection, where('userId', 'array-contains', uid));
+
 		unsubscribe = onSnapshot(
 			// Assign the unsubscribe function to a variable
 			q,
@@ -33,7 +34,10 @@
 					return {
 						id: doc.id,
 						currentWeight: data.currentWeight,
-						foodName: data.foodName
+						foodName: data.foodName,
+						status: data.status,
+						threshold: data.threshold,
+						userId: data.userId,
 					} as Containers;
 				});
 				containers = [...fetchedContainers];
@@ -59,7 +63,6 @@
 <div class="relative flex h-full w-full flex-col">
 	<main class="flex flex-col gap-2 px-5">
 		<h2 class="scroll-m-20 py-4 text-3xl font-extrabold tracking-tight sm:mt-3">Dashboard</h2>
-
 		{#if containers.length === 0}
 			<div
 				class="relative flex h-full w-full flex-col items-center justify-center gap-2 py-16 text-center"
@@ -86,8 +89,6 @@
 				{/each}
 			</ul>
 		{/if}
-
-		<!-- Rest of your code -->
 
 		{#if $isDesktop}
 			<Dialog.Root bind:open>
