@@ -6,7 +6,7 @@ import { formSchema } from './schema';
 import { db } from '$lib/firebase';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
-export const load: PageServerLoad = async (event) => {
+export const load: PageServerLoad = async () => {
 	return {
 		form: await superValidate(zod(formSchema))
 	};
@@ -31,6 +31,7 @@ export const actions: Actions = {
 			await updateDoc(docRef, {
 				foodName: name,
 				userId: arrayUnion(uid),
+				checked: false
 			});
 		} catch (err) {
 			return fail(500, {

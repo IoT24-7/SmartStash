@@ -29,6 +29,7 @@ export interface Containers {
 	carbohydrates: number;
 	proteins: number;
 	fats: number;
+	checked: boolean;
 }
 
 export {};

@@ -9,27 +9,27 @@
 	import { Wifi } from 'lucide-svelte';
 	import { WifiOff } from 'lucide-svelte';
 	import { SquarePen } from 'lucide-svelte';
-	import { Trash2 } from 'lucide-svelte';
 	import { Minus } from 'lucide-svelte';
 	import { Menu } from 'lucide-svelte';
 	import { Plus } from 'lucide-svelte';
 	import { CircleMinus } from 'lucide-svelte';
-	import { Unlink } from 'lucide-svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.ts';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import { Label } from '$lib/components/ui/label/index.ts';
 	import { Input } from '$lib/components/ui/input/index.ts';
 	import { db } from '$lib/firebase';
-	import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
+	import { doc, onSnapshot, updateDoc, arrayRemove, type Unsubscribe } from 'firebase/firestore';
+	import { onDestroy, onMount } from 'svelte';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 640px)');
 	const containerData = data.container;
-	// console.log(containerData);
-	let container: Containers[] = [];
+	let container = data.initialContainer;
+	console.log('Initial Container:', container);
+	let unsubscribe: Unsubscribe;
 	const setupContainerListener = () => {
 		const containerDoc = doc(db, 'containers', containerData);
-		onSnapshot(containerDoc, (docSnapshot) => {
+		unsubscribe = onSnapshot(containerDoc, (docSnapshot) => {
 			if (docSnapshot.exists()) {
 				const data = docSnapshot.data();
 				const fetchedContainer: Containers = {
@@ -47,10 +47,17 @@
 				};
 				container = fetchedContainer;
 			}
-			console.log(container);
+			console.log(container.id, ':', container);
 		});
 	};
-	setupContainerListener();
+	onMount(() => {
+		setupContainerListener();
+	});
+	onDestroy(() => {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
 
 	const removeContainer = async (container) => {
 		await updateDoc(doc(db, 'containers', container.id), {
@@ -94,7 +101,7 @@
 			{container.foodName}
 		</h2>
 		<div class="flex h-full w-full flex-col gap-4 p-4 sm:max-w-[480px]">
-			<Card.Root class="w-full">
+			<!-- <Card.Root class="w-full">
 				<Card.Header class="pb-2">
 					<Card.Title class="text-accent-foreground text-lg font-medium tracking-tight"
 						>Status</Card.Title
@@ -109,7 +116,7 @@
 						<WifiOff class=" h-6 w-6" />
 					{/if}
 				</Card.Content>
-			</Card.Root>
+			</Card.Root> -->
 			<Card.Root class="w-full">
 				<Card.Header class="pb-2">
 					<Card.Title class="text-accent-foreground text-lg font-medium tracking-tight"
@@ -161,9 +168,10 @@
 												<Minus class="h-4 w-4" />
 												<span class="sr-only">Decrease</span>
 											</Button>
+											
 											<div class="flex-1 text-center">
 												<div class="text-7xl font-bold tracking-tighter">
-													{container.goal}
+													<input type="number" class = "bg-transparent text-center w-3/4 [&::-webkit-inner-spin-button]:appearance-none" bind:value = {container.goal}>
 												</div>
 												<div class="text-muted-foreground text-[0.70rem] uppercase">grams</div>
 											</div>
