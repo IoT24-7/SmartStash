@@ -55,24 +55,40 @@ exports.syncFieldToFirestore = functions.database
 			const userId = firestoreData.userId;
 			const currentTimestamp = Date.now();
 			const notificationID = firestore.collection('dummyCollection').doc().id;
-            const arrayUsersNotified = firestore.notifiedUsers;
+            const arrayUsersNotified = firestoreData.notifiedUsers;
 
 			const currentWeight = containerData.currentWeight;
-			if (currentWeight < threshold && arrayUsersNotified.includes(userId)) {
+			if (currentWeight < threshold) {
 				// Iterate over userIDs array to create notifications for each user
 				const notificationPromises = userId.map((user) => {
 					// Generate a random ID for the notification document
 					// Prepare notification data
-					const notificationData = {
-						foodItem: foodName,
-						timestamp: currentTimestamp,
-						id: notificationID,
-					};
-					// Add notification for each user
-					return firestore
-						.collection(`users/${user}/notifications`)
-						.doc(notificationID)
-						.set(notificationData);
+                    if (arrayUsersNotified.includes(user)) {
+                        console.log("User already notified");
+                        return Promise.resolve();
+                    }
+                    else {
+                        // Update notifiedUsers array in the container document
+                        const updateNotifiedUsersPromise = docRef.update({
+                            notifiedUsers: admin.firestore.FieldValue.arrayUnion(user)
+                        });
+                        // Prepare notification data
+                        const notificationData = {
+                            containerId: user,
+                            foodItem: foodName,
+                            id: notificationID,
+                            timestamp: currentTimestamp
+                            //send: 1 // Assign the generated ID to the notification data
+                        };
+
+                        // Add notification for each user
+                        const addNotificationPromise =  firestore
+                            .collection(`users/${user}/notifications`)
+                            .doc(notificationID)
+                            .set(notificationData);
+
+                        return Promise.all([addNotificationPromise, updateNotifiedUsersPromise]);
+                    }
 				});
 				// Update currentWeight and timestamp in the Firestore document
 				const weightUpdatePromise = docRef.set(
@@ -93,12 +109,16 @@ exports.syncFieldToFirestore = functions.database
 					});
 			} else {
 				// Update the specific field in the Firestore document
-				return docRef.set(
-					{
-						currentWeight: currentWeight
-					},
-					{ merge: true }
-				);
+                const updatePromises = [
+                    docRef.set(
+                        {
+                            currentWeight: currentWeight
+                        },
+                        { merge: true }
+                    ),
+                    docRef.update({ notifiedUsers: [] })
+                ];
+                return Promise.all(updatePromises);
 			}
 		} catch (error) {
 			console.error('Error fetching Firestore document:', error);
