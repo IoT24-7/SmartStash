@@ -11,7 +11,7 @@
 		name: 'SmartStash',
 		description: 'The smart solution to manage your pantry.',
 		// TODO: UPDATE PRICE
-		price: '₱400.00',
+		price: '₱1499.00',
 		imageUrl: '/device_pic1.jpg',
 		features: [
 			'Measures remaining ingredients.',
@@ -93,17 +93,15 @@
 			class="mx-auto flex h-full max-w-6xl grid-cols-2 flex-col items-center gap-8 px-4 py-20 md:grid md:h-screen md:gap-16"
 		>
 			<div>
-				<h1 class="text-7xl tracking-tight font-bold drop-shadow-lg">
-					Get your SmartStash today!
-				</h1>
+				<h1 class="text-7xl font-bold tracking-tight drop-shadow-lg">Get your SmartStash today!</h1>
 				<p class="mt-6 text-lg">
 					SmartStash is the perfect solution for your pantry management needs. Get yours today and
 					experience the convenience of a smart pantry.
 				</p>
 			</div>
-			<div class="items-center flex relative h-full justify-center">
+			<div class="relative flex h-full items-center justify-center">
 				<div
-					class="justify-center bg-primary-13 product-container transform rounded-lg border-2 border-solid border-blue-800 shadow-lg transition-transform duration-200 hover:scale-110 hover:shadow-2xl h-3/5 w-3/5 "
+					class="bg-primary-13 product-container h-3/5 w-3/5 transform justify-center rounded-lg border-2 border-solid border-blue-800 shadow-lg transition-transform duration-200 hover:scale-110 hover:shadow-2xl"
 				>
 					<img
 						class=" rounded-t-lg object-cover object-center"

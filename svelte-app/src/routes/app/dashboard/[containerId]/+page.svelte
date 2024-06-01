@@ -230,7 +230,7 @@
 										>Price (per serving): {container.pricePesos === '' ||
 										container.pricePesos === undefined
 											? 'No information available'
-											: `Php ${container.pricePesos}`}
+											: `₱ ${container.pricePesos}`}
 									</Label>
 								</p>
 							</div>
